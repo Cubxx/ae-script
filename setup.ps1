@@ -18,7 +18,7 @@ function Get-AEScript-Path {
         return @{
             script = $scriptPath
             lib    = $libPath
-            UI     = $uiPath 
+            ui     = $uiPath 
         }
     }
     else {
@@ -50,8 +50,8 @@ function Select-Option {
 function Install-Web {
     param([hashtable]$paths)
     $owner = "Cubxx"
-    $repo = "My-AfterEffect-Script"
-    $type = Select-Option "Please select the script type you want to install:" @("UI", "lib", "script")
+    $repo = "ae-script"
+    $type = Select-Option "Please select the script type you want to install:" @("ui", "lib", "script")
 
     try {
         $response = Invoke-RestMethod -Uri "https://api.github.com/repos/$owner/$repo/contents/dist/$($type)?ref=main"
@@ -64,9 +64,9 @@ function Install-Web {
     $Install = { 
         $option = Select-Option "Please select a file to install:" $response "name"
         $filepath = Join-Path $paths.$type $option.name
-        # Write-Host "download url: '$($option.download_url)'"
-        # Write-Host "installation path: '$filepath'"
-        # Read-Host "Press any key to install..."
+        Write-Host "download url: '$($option.download_url)'"
+        Write-Host "installation path: '$filepath'"
+        Read-Host "Press any key to install..."
         Invoke-WebRequest -Uri $option.download_url -OutFile $filepath
         Write-Host "Install $($option.name) successfully" 
         & $Install

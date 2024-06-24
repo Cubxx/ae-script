@@ -2,21 +2,18 @@
   "compilerOptions": {
     "target": "ES3",
     "ignoreDeprecations": "5.0",
-    "jsx": "preserve",
+    "module": "ESNext",
+    // type
     "noLib": true,
     "types": [
       "types-for-adobe/AfterEffects/22.0"
     ],
     "strict": true,
+    // file
+    "jsx": "preserve",
     "rootDir": "src",
     "outDir": "dist",
     "removeComments": true,
-    // "exactOptionalPropertyTypes": true,
-    "strictPropertyInitialization": true,
-    // "sourceMap": true,
+    "sourceMap": true,
   },
-  "include": [
-    "src",
-    "types"
-  ]
 }

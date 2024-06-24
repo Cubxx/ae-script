@@ -1,3 +1,6 @@
+/**
+ * @description 封装了一些常用模块：文件系统、UI 构建、工具函数等
+ */
 const cubx = (function () {
     /**辅助模块 */
     const a = {
@@ -65,7 +68,9 @@ const cubx = (function () {
             }
         },
         get_selected_comps() {
-            const comps = app.project.selection.filter((e): e is CompItem => e instanceof CompItem);
+            const comps = app.project.selection.filter(
+                (e): e is CompItem => e instanceof CompItem,
+            );
             a.checkLength(comps, '请在项目面板中选择合成');
             return comps;
         },
@@ -96,7 +101,9 @@ const cubx = (function () {
         add_solid_layer(bgColor = [0.5, 0.5, 0.5, 1]) {
             const layer = this.add_layer();
             layer.name = 'Solid';
-            const contents = layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            const contents = layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             contents
                 .addProperty('ADBE Vector Shape - Rect')
                 .property('Size')
@@ -122,7 +129,9 @@ const cubx = (function () {
             layer.label = 1;
             layer.transform.scale.expression = '[100, 100]';
             layer.transform.opacity.setValue(0);
-            const contents = layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            const contents = layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             contents.addProperty('ADBE Vector Shape - Rect');
             return layer;
         },
@@ -133,7 +142,9 @@ const cubx = (function () {
             }
             const new_layer = layer.duplicate() as ShapeLayer;
             new_layer.name = [layer.name, group.name].join(' - ');
-            const contents = new_layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            const contents = new_layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             const beDels = contents
                 .map((e, i) => {
                     if (i + 1 != group.propertyIndex) {
@@ -148,7 +159,8 @@ const cubx = (function () {
             const properties = this.get_selected_properties();
             const groups = properties.filter(
                 (e): e is PropertyGroup =>
-                    e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup),
+                    e instanceof PropertyGroup &&
+                    !(e instanceof MaskPropertyGroup),
             );
             a.checkLength(groups, '请选择属性组(除蒙版以外)');
             const beDels = groups.map((e) => (this.add_layer_from_group(e), e));
@@ -161,27 +173,44 @@ const cubx = (function () {
             const layers: LayerCollection = comp_layer.source.layers;
             for (let i = 1; i <= layers.length; i++) {
                 layers[i].copyToComp(containingComp);
-                containingComp.layers[comp_layer.index - 1].startTime += startTime;
+                containingComp.layers[comp_layer.index - 1].startTime +=
+                    startTime;
             }
             comp_layer.selected = false;
         },
         unpack_selected_comps() {
             const layers = this.get_selected_layers();
-            const comp_layers = layers.filter((layer): layer is AVLayer & { source: CompItem } => {
-                layer.selected = false;
-                return layer instanceof AVLayer && layer.source instanceof CompItem;
-            });
+            const comp_layers = layers.filter(
+                (layer): layer is AVLayer & { source: CompItem } => {
+                    layer.selected = false;
+                    return (
+                        layer instanceof AVLayer &&
+                        layer.source instanceof CompItem
+                    );
+                },
+            );
             a.checkLength(comp_layers, '请选择合成图层');
-            const beDels = comp_layers.map((e, i) => (b.unpack_comp(e), e.source));
+            const beDels = comp_layers.map(
+                (e, i) => (b.unpack_comp(e), e.source),
+            );
             a.emptyArray(beDels);
         },
         unpack_layer(layer: ShapeLayer) {
             layer.selected = true;
-            const contents = layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            const contents = layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             const group_array = contents.filter((e): e is PropertyGroup => {
-                return e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup);
+                return (
+                    e instanceof PropertyGroup &&
+                    !(e instanceof MaskPropertyGroup)
+                );
             });
-            a.checkLength(group_array, `${layer.name} 图层只有 ${group_array.length} 个属性组`, 2);
+            a.checkLength(
+                group_array,
+                `${layer.name} 图层只有 ${group_array.length} 个属性组`,
+                2,
+            );
             group_array.map(this.add_layer_from_group, true);
             layer.selected = false;
         },
@@ -219,7 +248,10 @@ const cubx = (function () {
             }
             item.outputModule(1).setSettings({
                 'Output File Info': {
-                    'Base Path': app.project.file.fsName.replace(/\\[^\\]+$/, ''),
+                    'Base Path': app.project.file.fsName.replace(
+                        /\\[^\\]+$/,
+                        '',
+                    ),
                     'Subfolder Path': 'render',
                     'File Name': item.comp.name,
                 },
@@ -240,7 +272,9 @@ const cubx = (function () {
         palette: ((that: any, text = '') => {
             return that instanceof Panel
                 ? that
-                : new Window('palette', void 0, void 0, { resizeable: true }).assign({
+                : new Window('palette', void 0, void 0, {
+                      resizeable: true,
+                  }).assign({
                       orientation: 'column',
                       alignChildren: 'left',
                       margins: 0,
@@ -254,7 +288,9 @@ const cubx = (function () {
         dialog: ((that: any, text = '') => {
             return that instanceof Panel
                 ? that
-                : new Window('dialog', void 0, void 0, { resizeable: true }).assign({
+                : new Window('dialog', void 0, void 0, {
+                      resizeable: true,
+                  }).assign({
                       orientation: 'column',
                       alignChildren: 'left',
                       margins: 0,
@@ -286,7 +322,9 @@ const cubx = (function () {
             return node.add('button', void 0, text);
         },
         iconbutton(node: Window | Panel | Group, icon: string) {
-            return node.add('iconbutton', void 0, icon, { style: 'toolbutton' });
+            return node.add('iconbutton', void 0, icon, {
+                style: 'toolbutton',
+            });
         },
         statictext(node: Window | Panel | Group, text: string) {
             const group = u.group(node);
@@ -299,7 +337,11 @@ const cubx = (function () {
         slider(node: Window | Panel | Group, text: string) {
             return u.statictext(node, text).add('slider', void 0, 0, 0, 100);
         },
-        dropdownlist(node: Window | Panel | Group, text: string, items: string[]) {
+        dropdownlist(
+            node: Window | Panel | Group,
+            text: string,
+            items: string[],
+        ) {
             return u.statictext(node, text).add('dropdownlist', void 0, items);
         },
         divider(node: Window | Panel | Group) {
@@ -349,10 +391,15 @@ const cubx = (function () {
             });
             return datas;
         },
-        save(datas: Record<string, string>, config: { path?: string; prompt?: string }) {
+        save(
+            datas: Record<string, string>,
+            config: { path?: string; prompt?: string },
+        ) {
             const { path, prompt } = config;
             const folder =
-                path !== void 0 ? new Folder(path).selectDlg(prompt) : Folder.selectDialog(prompt);
+                path !== void 0
+                    ? new Folder(path).selectDlg(prompt)
+                    : Folder.selectDialog(prompt);
             if (!folder) return;
             datas.each((text, name) => {
                 f.write(folder.fsName + '\\' + name, text);
@@ -370,7 +417,9 @@ const cubx = (function () {
             switch (type) {
                 case 'file': {
                     const file = new File(path);
-                    return file.exists ? file : create_folder(file.parent, file);
+                    return file.exists
+                        ? file
+                        : create_folder(file.parent, file);
                 }
                 case 'folder': {
                     const folder = new Folder(path);
@@ -382,7 +431,8 @@ const cubx = (function () {
             (path: string, type: 'folder'): Folder;
         },
     };
-    File.isEncodingAvailable('utf-8') || alert('文件读写功能受限: 系统不支持utf-8编码');
+    File.isEncodingAvailable('utf-8') ||
+        alert('文件读写功能受限: 系统不支持utf-8编码');
     return { a, b, u, f };
 })();
 const { abort } = cubx.a;

@@ -1,15 +1,27 @@
 {
     "name": "ae-script",
     "version": "1.0.0",
-    "description": "",
+    "description": "personal AfterEffect scripts",
     "keywords": [],
-    "author": "cubxx",
+    "author": "Cubxx",
     "license": "ISC",
+    "type": "module",
     "scripts": {
-        "build": "tsc"
+        "type-check": "tsc -noEmit",
+        "dev": "rollup -w -c",
+        "build": "rollup -c"
     },
     "dependencies": {
-        "types-for-adobe": "^7.0.12",
-        "typescript": "^5.2.2"
+        "json5": "^2.2.3"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^11.1.6",
+        "glob": "^10.4.2",
+        "rollup": "^4.18.0",
+        "tslib": "^2.6.3",
+        "types-for-adobe": "^7.2.1",
+        "typescript": "5.4.5"
     }
 }

@@ -35,3 +35,4 @@ cubx.b.set_undo_group(function () {
     }
     get_last_layer().remove();
 })();
+//# sourceMappingURL=cut%20AVLayer%20by%20Markers.jsx.map

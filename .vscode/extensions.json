@@ -1,6 +1,6 @@
 {
     "recommendations": [
         "adobe.extendscript-debug",
-        "ms-vscode.powershell"
+        "andersnm.sourcemap-helper"
     ]
 }

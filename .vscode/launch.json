@@ -5,9 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ExtendScript",
+            "name": "jsx",
             "type": "extendscript-debug",
             "request": "launch",
+            "script": "${file}",
+        },
+        {
+            "name": "tsx",
+            "type": "extendscript-debug",
+            "request": "launch",
+            "script": "${workspaceFolder}${/}dist${/}${fileBasenameNoExtension}.jsx",
         }
     ]
 }

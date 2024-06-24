@@ -79,7 +79,9 @@ var cubx = (function () {
             if (bgColor === void 0) { bgColor = [0.5, 0.5, 0.5, 1]; }
             var layer = this.add_layer();
             layer.name = 'Solid';
-            var contents = layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            var contents = layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             contents
                 .addProperty('ADBE Vector Shape - Rect')
                 .property('Size')
@@ -105,7 +107,9 @@ var cubx = (function () {
             layer.label = 1;
             layer.transform.scale.expression = '[100, 100]';
             layer.transform.opacity.setValue(0);
-            var contents = layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            var contents = layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             contents.addProperty('ADBE Vector Shape - Rect');
             return layer;
         },
@@ -116,7 +120,9 @@ var cubx = (function () {
             }
             var new_layer = layer.duplicate();
             new_layer.name = [layer.name, group.name].join(' - ');
-            var contents = new_layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            var contents = new_layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             var beDels = contents
                 .map(function (e, i) {
                 if (i + 1 != group.propertyIndex) {
@@ -131,7 +137,8 @@ var cubx = (function () {
             var _this = this;
             var properties = this.get_selected_properties();
             var groups = properties.filter(function (e) {
-                return e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup);
+                return e instanceof PropertyGroup &&
+                    !(e instanceof MaskPropertyGroup);
             });
             a.checkLength(groups, '请选择属性组(除蒙版以外)');
             var beDels = groups.map(function (e) { return (_this.add_layer_from_group(e), e); });
@@ -143,7 +150,8 @@ var cubx = (function () {
             var layers = comp_layer.source.layers;
             for (var i = 1; i <= layers.length; i++) {
                 layers[i].copyToComp(containingComp);
-                containingComp.layers[comp_layer.index - 1].startTime += startTime;
+                containingComp.layers[comp_layer.index - 1].startTime +=
+                    startTime;
             }
             comp_layer.selected = false;
         },
@@ -151,7 +159,8 @@ var cubx = (function () {
             var layers = this.get_selected_layers();
             var comp_layers = layers.filter(function (layer) {
                 layer.selected = false;
-                return layer instanceof AVLayer && layer.source instanceof CompItem;
+                return (layer instanceof AVLayer &&
+                    layer.source instanceof CompItem);
             });
             a.checkLength(comp_layers, '请选择合成图层');
             var beDels = comp_layers.map(function (e, i) { return (b.unpack_comp(e), e.source); });
@@ -159,9 +168,12 @@ var cubx = (function () {
         },
         unpack_layer: function (layer) {
             layer.selected = true;
-            var contents = layer.property('ADBE Root Vectors Group').is(PropertyGroup);
+            var contents = layer
+                .property('ADBE Root Vectors Group')
+                .is(PropertyGroup);
             var group_array = contents.filter(function (e) {
-                return e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup);
+                return (e instanceof PropertyGroup &&
+                    !(e instanceof MaskPropertyGroup));
             });
             a.checkLength(group_array, "".concat(layer.name, " \u56FE\u5C42\u53EA\u6709 ").concat(group_array.length, " \u4E2A\u5C5E\u6027\u7EC4"), 2);
             group_array.map(this.add_layer_from_group, true);
@@ -218,7 +230,9 @@ var cubx = (function () {
             if (text === void 0) { text = ''; }
             return that instanceof Panel
                 ? that
-                : new Window('palette', void 0, void 0, { resizeable: true }).assign({
+                : new Window('palette', void 0, void 0, {
+                    resizeable: true
+                }).assign({
                     orientation: 'column',
                     alignChildren: 'left',
                     margins: 0,
@@ -230,7 +244,9 @@ var cubx = (function () {
             if (text === void 0) { text = ''; }
             return that instanceof Panel
                 ? that
-                : new Window('dialog', void 0, void 0, { resizeable: true }).assign({
+                : new Window('dialog', void 0, void 0, {
+                    resizeable: true
+                }).assign({
                     orientation: 'column',
                     alignChildren: 'left',
                     margins: 0,
@@ -261,7 +277,9 @@ var cubx = (function () {
             return node.add('button', void 0, text);
         },
         iconbutton: function (node, icon) {
-            return node.add('iconbutton', void 0, icon, { style: 'toolbutton' });
+            return node.add('iconbutton', void 0, icon, {
+                style: 'toolbutton'
+            });
         },
         statictext: function (node, text) {
             var group = u.group(node);
@@ -317,7 +335,9 @@ var cubx = (function () {
         },
         save: function (datas, config) {
             var path = config.path, prompt = config.prompt;
-            var folder = path !== void 0 ? new Folder(path).selectDlg(prompt) : Folder.selectDialog(prompt);
+            var folder = path !== void 0
+                ? new Folder(path).selectDlg(prompt)
+                : Folder.selectDialog(prompt);
             if (!folder)
                 return;
             datas.each(function (text, name) {
@@ -337,7 +357,9 @@ var cubx = (function () {
             switch (type) {
                 case 'file': {
                     var file = new File(path);
-                    return file.exists ? file : create_folder(file.parent, file);
+                    return file.exists
+                        ? file
+                        : create_folder(file.parent, file);
                 }
                 case 'folder': {
                     var folder = new Folder(path);
@@ -346,7 +368,8 @@ var cubx = (function () {
             }
         })
     };
-    File.isEncodingAvailable('utf-8') || alert('文件读写功能受限: 系统不支持utf-8编码');
+    File.isEncodingAvailable('utf-8') ||
+        alert('文件读写功能受限: 系统不支持utf-8编码');
     return { a: a, b: b, u: u, f: f };
 })();
 var abort = cubx.a.abort;
@@ -412,3 +435,4 @@ var abort = cubx.a.abort;
         return curry_each(this)(this.numProperties)(function (arr, i) { return arr(i + 1); })(function (e, i, arr) { return fn(e, i, _this) && arr.push(e); });
     };
 })();
+//# sourceMappingURL=cubx.lib.jsx.map

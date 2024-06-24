@@ -1,35 +1,45 @@
--   [介绍](#介绍)
--   [模块](#模块)
-    -   [cubx.jsx](#cubxjsx)
-    -   [json2.jsx](#json2jsx)
--   [UI 脚本](#ui脚本)
-    -   [Toolbox.jsx](#toolboxjsx)
-    -   [LayerSaver.jsx](#layersaverjsx)
--   [普通脚本](#普通脚本)
+# ae-script
 
----
+一些自制 AE 脚本
 
-# 介绍
+## 安装
 
-本项目用于存储一些自制 AE 脚本
+有 2 种安装方式：
 
-所有脚本放在**dist 文件夹**
+### 使用 [setup.ps1](setup.ps1)（建议）
 
-这些脚本都需要模块: cubx.jsx，请到[lib](dist/lib)文件夹中自行下载安装
+这是一个辅助安装的 PowerShell 脚本，它用于将本仓库脚本下载至对应本地路径。
 
-有些脚本还需要其他依赖模块，这些模板在[lib](dist/lib)文件夹均有提供
+可单独使用。
 
-| 脚本类型              | 项目文件夹            | 本地文件夹                                |
-| :-------------------- | :-------------------- | :---------------------------------------- |
-| [模块](#模块)         | [lib](dist/lib)       | `.\Support Files\Scripts\Startup`         |
-| [UI 脚本](#UI脚本)    | [UI](dist/UI)         | `.\Support Files\Scripts\ScriptUI Panels` |
-| [普通脚本](#普通脚本) | [script](dist/script) | `.\Support Files\Scripts`                 |
+### 直接下载
 
-# 模块
+单击 [脚本列表](#脚本列表) 内的链接，注意有些脚本还需要下载依赖。
 
-## cubx.jsx
+把脚本文件放到对应安装路径中，见 [脚本类型](#脚本类型)。
 
-封装了一些常用模块：文件系统、UI 构建、工具函数等
+参考：
+
+-   https://helpx.adobe.com/cn/after-effects/using/scripts.html
+-   https://www.baidu.com/s?wd=如何安装ae脚本
+
+## 脚本类型
+
+本仓库有 3 种脚本类型，不同类型分别对应不同安装路径。
+
+|       脚本名 | 安装路径                                  |
+| -----------: | :---------------------------------------- |
+| _\*.lib.jsx_ | `./Support Files/Scripts/Startup`         |
+|  _\*.ui.jsx_ | `./Support Files/Scripts/ScriptUI Panels` |
+|     _\*.jsx_ | `./Support Files/Scripts`                 |
+
+## 脚本列表
+
+有些脚本还需要下载安装依赖。
+
+| 脚本                                | 依赖 | 描述                                              |
+| ----------------------------------- | ---- | ------------------------------------------------- |
+| _[cubx.lib.jsx](dist/cubx.lib.jsx)_ |      | 封装了一些常用模块：文件系统、UI 构建、工具函数等 |
 
 ## json2.jsx
 

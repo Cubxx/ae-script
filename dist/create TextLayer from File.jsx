@@ -10,3 +10,4 @@ cubx.b.set_undo_group(function () {
         });
     });
 })();
+//# sourceMappingURL=create%20TextLayer%20from%20File.jsx.map

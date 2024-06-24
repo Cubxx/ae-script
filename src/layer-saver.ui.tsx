@@ -1,3 +1,4 @@
+/**@requires cubx,json5 */
 (function (that) {
     const { b, u, f } = cubx;
     const config = {
