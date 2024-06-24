@@ -3,6 +3,7 @@
     "target": "ES3",
     "ignoreDeprecations": "5.0",
     "module": "ESNext",
+    "moduleResolution": "Bundler",
     // type
     "noLib": true,
     "types": [
@@ -11,9 +12,7 @@
     "strict": true,
     // file
     "jsx": "preserve",
-    "rootDir": "src",
-    "outDir": "dist",
-    "removeComments": true,
+    // "removeComments": true,
     "sourceMap": true,
   },
 }

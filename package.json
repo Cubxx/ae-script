@@ -8,11 +8,12 @@
     "type": "module",
     "scripts": {
         "type-check": "tsc -noEmit",
-        "dev": "rollup -w -c",
-        "build": "rollup -c"
+        "dev": "rollup --config rollup.config.dev.js -w",
+        "build": "rollup --config rollup.config.prod.js"
     },
     "dependencies": {
-        "json5": "^2.2.3"
+        "json5": "^2.2.3",
+        "soil-ts": "^1.1.6"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.3",
