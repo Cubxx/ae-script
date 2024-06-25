@@ -8,7 +8,7 @@ export const a = {
         if (!$.level) {
             alert(message, 'Abort');
         }
-        throw message;
+        throw new Error(message);
     },
     /**数组.length < minLength 则 abort */
     checkLength(array: any[], message: string, minLength = 1) {
@@ -27,6 +27,7 @@ export const a = {
         const group_info_arr = _.filter(
             _.map(array, (e, i) => {
                 if (e instanceof PropertyGroup) {
+                    // return _.pick(e, ['parentProperty', 'propertyIndex']);
                     const { parentProperty, propertyIndex } = e;
                     return { parentProperty, propertyIndex };
                 } else {
@@ -48,10 +49,6 @@ export const a = {
 };
 /**工具箱模块 */
 export const b = {
-    // set
-    set_undo_group(fn: () => void, tip = new Date().getTime() + '') {
-        return () => _.setUndoGroup('cubx.' + tip, fn);
-    },
     // get
     get_active_comp() {
         const comp = app.project.activeItem;
@@ -68,12 +65,12 @@ export const b = {
         return comps;
     },
     get_selected_layers() {
-        const layers = this.get_active_comp().selectedLayers;
+        const layers = b.get_active_comp().selectedLayers;
         a.checkLength(layers, '请选择图层');
         return layers;
     },
     get_selected_properties() {
-        const layers = this.get_selected_layers();
+        const layers = b.get_selected_layers();
         let properties: _PropertyClasses[] = [];
         _.each(layers, (layer) => {
             properties = properties.concat(layer.selectedProperties);
@@ -92,7 +89,7 @@ export const b = {
         (type: string): void;
     },
     add_solid_layer(bgColor = [0.5, 0.5, 0.5, 1]) {
-        const layer = this.add_layer();
+        const layer = b.add_layer();
         layer.name = 'Solid';
         const contents = layer.property(
             'ADBE Root Vectors Group',
@@ -110,14 +107,14 @@ export const b = {
         return layer;
     },
     add_adjustment_layer() {
-        const layer = this.add_solid_layer();
+        const layer = b.add_solid_layer();
         layer.name = 'Adjustment';
         layer.label = 5;
         layer.adjustmentLayer = true;
         return layer;
     },
     add_null_layer() {
-        const layer = this.add_layer();
+        const layer = b.add_layer();
         layer.name = 'Null';
         layer.label = 1;
         layer.transform.scale.expression = '[100, 100]';
@@ -146,14 +143,14 @@ export const b = {
         return new_layer;
     },
     add_layers_from_selected_groups() {
-        const properties = this.get_selected_properties();
+        const properties = b.get_selected_properties();
         const groups = _.filter(
             properties,
             (e): e is PropertyGroup =>
                 e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup),
         );
         a.checkLength(groups, '请选择属性组(除蒙版以外)');
-        const beDels = _.map(groups, (e) => (this.add_layer_from_group(e), e));
+        const beDels = _.map(groups, (e) => (b.add_layer_from_group(e), e));
         a.emptyArray(beDels);
     },
     // unpack
@@ -168,7 +165,7 @@ export const b = {
         comp_layer.selected = false;
     },
     unpack_selected_comps() {
-        const layers = this.get_selected_layers();
+        const layers = b.get_selected_layers();
         const comp_layers = _.filter(
             layers,
             (layer): layer is AVLayer & { source: CompItem } => {
@@ -201,11 +198,11 @@ export const b = {
             `${layer.name} 图层只有 ${group_array.length} 个属性组`,
             2,
         );
-        _.map(group_array, this.add_layer_from_group);
+        _.map(group_array, b.add_layer_from_group);
         layer.selected = false;
     },
     unpack_selected_layers() {
-        const layers = this.get_selected_layers();
+        const layers = b.get_selected_layers();
         const shape_layers = _.filter(layers, (e): e is ShapeLayer => {
             e.selected = false;
             return e instanceof ShapeLayer;
@@ -220,14 +217,14 @@ export const b = {
         app.project.renderQueue.render();
     },
     render_active_comp() {
-        this.render_comp(this.get_active_comp());
+        b.render_comp(b.get_active_comp());
     },
     render_selected_comps() {
-        _.map(this.get_selected_comps(), this.render_comp);
+        _.map(b.get_selected_comps(), b.render_comp);
     },
     render_comp(comp: CompItem) {
         const item = app.project.renderQueue.items.add(comp);
-        this.render_setting(item);
+        b.render_setting(item);
         item.render = true;
     },
     render_setting(item: RenderQueueItem) {
@@ -243,103 +240,6 @@ export const b = {
                 'File Name': item.comp.name,
             },
         });
-    },
-};
-/**UI模块 */
-export const u = {
-    show(win: Window | Panel) {
-        win.layout.layout(true);
-        win.layout.resize();
-        // @ts-ignore
-        win.onResizing = win.onResize = () => win.layout.resize();
-        if (win instanceof Window) {
-            win.show();
-        }
-    },
-    palette: ((that: any, text = '') => {
-        return that instanceof Panel
-            ? that
-            : _.assign(
-                  new Window('palette', void 0, void 0, {
-                      resizeable: true,
-                  }),
-                  {
-                      orientation: 'column',
-                      alignChildren: 'left',
-                      margins: 0,
-                      spacing: 0,
-                      text,
-                  },
-              );
-    }) as {
-        (that: typeof globalThis, text?: string): Panel | Window;
-        (that: null, text?: string): Window;
-    },
-    dialog: ((that: any, text = '') => {
-        return that instanceof Panel
-            ? that
-            : _.assign(
-                  new Window('dialog', void 0, void 0, {
-                      resizeable: true,
-                  }),
-                  {
-                      orientation: 'column',
-                      alignChildren: 'left',
-                      margins: 0,
-                      spacing: 0,
-                      text,
-                  },
-              );
-    }) as {
-        (that: typeof globalThis, text?: string): Panel | Window;
-        (that: null, text?: string): Window;
-    },
-    group(node: Window | Panel | Group) {
-        return _.assign(node.add('group'), {
-            orientation: 'row',
-            alignChildren: 'center',
-            margins: 0,
-            spacing: 10,
-        });
-    },
-    panel(node: Window | Panel | Group, text = '') {
-        return _.assign(node.add('panel'), {
-            orientation: 'row',
-            alignChildren: 'center',
-            margins: 10,
-            spacing: 10,
-            text,
-        });
-    },
-    button(node: Window | Panel | Group, text = '') {
-        return node.add('button', void 0, text);
-    },
-    iconbutton(node: Window | Panel | Group, icon: string) {
-        return node.add('iconbutton', void 0, icon, {
-            style: 'toolbutton',
-        });
-    },
-    statictext(node: Window | Panel | Group, text: string) {
-        const group = u.group(node);
-        group.add('statictext', void 0, text);
-        return group;
-    },
-    edittext(node: Window | Panel | Group, text: string, value: string) {
-        return u.statictext(node, text).add('edittext', void 0, value);
-    },
-    slider(node: Window | Panel | Group, text: string) {
-        return u.statictext(node, text).add('slider', void 0, 0, 0, 100);
-    },
-    dropdownlist(node: Window | Panel | Group, text: string, items: string[]) {
-        return u.statictext(node, text).add('dropdownlist', void 0, items);
-    },
-    divider(node: Window | Panel | Group) {
-        return _.assign(u.panel(node), {
-            alignment: 'fill',
-        });
-    },
-    checkbox(node: Window | Panel | Group, text: string) {
-        return node.add('checkbox', void 0, text);
     },
 };
 /**文件模块 */
@@ -402,7 +302,7 @@ export const f = {
             if (folder.exists || folder.create()) {
                 return result;
             } else {
-                return abort('文件夹创建失败');
+                return a.abort('文件夹创建失败');
             }
         }
         switch (type) {
@@ -420,7 +320,3 @@ export const f = {
         (path: string, type: 'folder'): Folder;
     },
 };
-File.isEncodingAvailable('utf-8') ||
-    alert('文件读写功能受限: 系统不支持utf-8编码');
-
-const { abort } = a;

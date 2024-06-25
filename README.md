@@ -10,13 +10,12 @@
 
 这是一个辅助安装的 PowerShell 脚本，它用于将本仓库脚本下载至对应本地路径。
 
-可单独使用。
+-   网络安装（只需联网）
+-   本地安装（需要下载整个仓库）
 
 ### 直接下载
 
-单击 [脚本列表](#脚本列表) 内的链接，注意有些脚本还需要下载依赖。
-
-把脚本文件放到对应安装路径中，见 [脚本类型](#脚本类型)。
+单击 [脚本列表](#脚本列表) 内的链接，把脚本文件放到对应安装路径中，见 [脚本类型](#脚本类型)。
 
 参考：
 
@@ -25,36 +24,22 @@
 
 ## 脚本类型
 
-本仓库有 3 种脚本类型，不同类型分别对应不同安装路径。
+本仓库有 2 种脚本类型，不同类型分别对应不同安装路径。
 
-|       脚本名 | 安装路径                                  |
-| -----------: | :---------------------------------------- |
-| _\*.lib.jsx_ | `./Support Files/Scripts/Startup`         |
-|  _\*.ui.jsx_ | `./Support Files/Scripts/ScriptUI Panels` |
-|     _\*.jsx_ | `./Support Files/Scripts`                 |
+|      脚本名 | 安装路径                                  |
+| ----------: | :---------------------------------------- |
+|    _\*.jsx_ | `./Support Files/Scripts`                 |
+| _\*.ui.jsx_ | `./Support Files/Scripts/ScriptUI Panels` |
+
+<!-- | _\*.lib.jsx_ | `./Support Files/Scripts/Startup`         | -->
 
 ## 脚本列表
 
-有些脚本还需要下载安装依赖。
+| 原版 | 压缩版 | 描述 |
+| --- | --- | --- |
+| _[toolbox.ui.jsx](dist/toolbox.ui.jsx)_ | _[toolbox.ui.min.jsx](dist/toolbox.ui.min.jsx)_ | 自制工具面板 |
 
-| 脚本                                | 依赖 | 描述                                              |
-| ----------------------------------- | ---- | ------------------------------------------------- |
-| _[cubx.lib.jsx](dist/cubx.lib.jsx)_ |      | 封装了一些常用模块：文件系统、UI 构建、工具函数等 |
+## 最佳实践
 
-## json2.jsx
-
-来自：https://github.com/douglascrockford/JSON-js
-
-# UI 脚本
-
-## Toolbox.jsx
-
-个人工具箱
-
-## LayerSaver.jsx
-
-图层存储，目前支持：形状层、文本层
-
-> 依赖模块：json2.jsx
-
-# 普通脚本
+-   [文档](https://docs.yuelili.com/#/post/Ae/scripting/zh/General/Application.md)
+-   [工具库](https://raymondclr.github.io/Soil/modules/soil.html)

@@ -771,8 +771,10 @@
     }
     var a = {
         abort: function(message) {
-            if (!$.level) alert(message, "Abort");
-            throw message;
+            if (!$.level) {
+                alert(message, "Abort");
+            }
+            throw new Error(message);
         },
         checkLength: function(array, message, minLength) {
             if (minLength === void 0) {
@@ -807,14 +809,6 @@
         }
     };
     var b = {
-        set_undo_group: function(fn, tip) {
-            if (tip === void 0) {
-                tip = (new Date).getTime() + "";
-            }
-            return function() {
-                return setUndoGroup("cubx." + tip, fn);
-            };
-        },
         get_active_comp: function() {
             var comp = app.project.activeItem;
             return comp instanceof CompItem ? comp : a.abort("请在时间轴上打开合成");
@@ -827,12 +821,12 @@
             return comps;
         },
         get_selected_layers: function() {
-            var layers = this.get_active_comp().selectedLayers;
+            var layers = b.get_active_comp().selectedLayers;
             a.checkLength(layers, "请选择图层");
             return layers;
         },
         get_selected_properties: function() {
-            var layers = this.get_selected_layers();
+            var layers = b.get_selected_layers();
             var properties = [];
             forEach(layers, function(layer) {
                 properties = properties.concat(layer.selectedProperties);
@@ -850,7 +844,7 @@
             if (bgColor === void 0) {
                 bgColor = [ 0.5, 0.5, 0.5, 1 ];
             }
-            var layer = this.add_layer();
+            var layer = b.add_layer();
             layer.name = "Solid";
             var contents = layer.property("ADBE Root Vectors Group");
             contents.addProperty("ADBE Vector Shape - Rect").property("Size").setValue([ layer.width, layer.height ]);
@@ -858,14 +852,14 @@
             return layer;
         },
         add_adjustment_layer: function() {
-            var layer = this.add_solid_layer();
+            var layer = b.add_solid_layer();
             layer.name = "Adjustment";
             layer.label = 5;
             layer.adjustmentLayer = true;
             return layer;
         },
         add_null_layer: function() {
-            var layer = this.add_layer();
+            var layer = b.add_layer();
             layer.name = "Null";
             layer.label = 1;
             layer.transform.scale.expression = "[100, 100]";
@@ -890,14 +884,13 @@
             return new_layer;
         },
         add_layers_from_selected_groups: function() {
-            var _this = this;
-            var properties = this.get_selected_properties();
+            var properties = b.get_selected_properties();
             var groups = filter(properties, function(e) {
                 return e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup);
             });
             a.checkLength(groups, "请选择属性组(除蒙版以外)");
             var beDels = map(groups, function(e) {
-                return _this.add_layer_from_group(e), e;
+                return b.add_layer_from_group(e), e;
             });
             a.emptyArray(beDels);
         },
@@ -912,7 +905,7 @@
             comp_layer.selected = false;
         },
         unpack_selected_comps: function() {
-            var layers = this.get_selected_layers();
+            var layers = b.get_selected_layers();
             var comp_layers = filter(layers, function(layer) {
                 layer.selected = false;
                 return layer instanceof AVLayer && layer.source instanceof CompItem;
@@ -931,11 +924,11 @@
                 e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup) && group_array.push(e);
             });
             a.checkLength(group_array, "".concat(layer.name, " 图层只有 ").concat(group_array.length, " 个属性组"), 2);
-            map(group_array, this.add_layer_from_group);
+            map(group_array, b.add_layer_from_group);
             layer.selected = false;
         },
         unpack_selected_layers: function() {
-            var layers = this.get_selected_layers();
+            var layers = b.get_selected_layers();
             var shape_layers = filter(layers, function(e) {
                 e.selected = false;
                 return e instanceof ShapeLayer;
@@ -951,14 +944,14 @@
             app.project.renderQueue.render();
         },
         render_active_comp: function() {
-            this.render_comp(this.get_active_comp());
+            b.render_comp(b.get_active_comp());
         },
         render_selected_comps: function() {
-            map(this.get_selected_comps(), this.render_comp);
+            map(b.get_selected_comps(), b.render_comp);
         },
         render_comp: function(comp) {
             var item = app.project.renderQueue.items.add(comp);
-            this.render_setting(item);
+            b.render_setting(item);
             item.render = true;
         },
         render_setting: function(item) {
@@ -972,29 +965,29 @@
                     "File Name": item.comp.name
                 }
             });
-        },
-        fix_expression: function() {
-            var map$1 = [ [ "点", "Point" ], [ "3D点", "3D Point" ], [ "角度", "Angle" ], [ "滑块", "Slider" ], [ "颜色", "Color" ], [ "复选框", "Checkbox" ], [ "菜单", "Menu" ], [ "图层", "Layer" ] ];
-            var fix = {
-                zh_CN: function() {
-                    map(map$1, function(_a) {
-                        var zh = _a[0], en = _a[1];
-                        return app.project.autoFixExpressions(en, zh);
-                    });
-                },
-                en_US: function() {
-                    map(map$1, function(_a) {
-                        var zh = _a[0], en = _a[1];
-                        return app.project.autoFixExpressions(zh, en);
-                    });
-                }
-            };
-            if (has(fix, app.isoLanguage)) {
-                fix[app.isoLanguage]();
-            }
         }
     };
-    var ui = reduce([ [ "UC", b.unpack_selected_comps ], [ "UL", b.unpack_selected_layers ], [ "AS", b.add_solid_layer ], [ "AA", b.add_adjustment_layer ], [ "AN", b.add_null_layer ], [ "AG", b.add_layers_from_selected_groups ], [ "R", b.render_selected_comps ], [ "F", b.fix_expression ] ], function(acc, _a, i) {
+    function fix_expression() {
+        var map$1 = [ [ "点", "Point" ], [ "3D点", "3D Point" ], [ "角度", "Angle" ], [ "滑块", "Slider" ], [ "颜色", "Color" ], [ "复选框", "Checkbox" ], [ "菜单", "Menu" ], [ "图层", "Layer" ] ];
+        var fix = {
+            zh_CN: function() {
+                map(map$1, function(_a) {
+                    var zh = _a[0], en = _a[1];
+                    return app.project.autoFixExpressions(en, zh);
+                });
+            },
+            en_US: function() {
+                map(map$1, function(_a) {
+                    var zh = _a[0], en = _a[1];
+                    return app.project.autoFixExpressions(zh, en);
+                });
+            }
+        };
+        if (has(fix, app.isoLanguage)) {
+            fix[app.isoLanguage]();
+        }
+    }
+    var ui = reduce([ [ "UC", b.unpack_selected_comps ], [ "UL", b.unpack_selected_layers ], [ "AS", b.add_solid_layer ], [ "AA", b.add_adjustment_layer ], [ "AN", b.add_null_layer ], [ "AG", b.add_layers_from_selected_groups ], [ "R", b.render_selected_comps ], [ "F", fix_expression ] ], function(acc, _a, i) {
         var text = _a[0], fn = _a[1];
         acc["button" + i] = {
             style: {
@@ -1011,8 +1004,7 @@
             orientation: "column",
             alignChildren: "center",
             margins: 0,
-            spacing: 0,
-            text: "toolbox"
+            spacing: 0
         }
     });
     tree.context = this;

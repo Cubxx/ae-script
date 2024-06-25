@@ -7,9 +7,12 @@
     "license": "ISC",
     "type": "module",
     "scripts": {
-        "type-check": "tsc -noEmit",
-        "dev": "rollup --config rollup.config.dev.js -w",
-        "build": "rollup --config rollup.config.prod.js"
+        "launch": "node script/launch.js",
+        "readme": "node script/readme.js",
+        "dev-only": "set NODE_ENV=dev&& rollup -c -w",
+        "dev": "run-p launch dev-only",
+        "build": "set NODE_ENV=prod&& rollup -c && npm run readme",
+        "i": "powershell ./setup.ps1"
     },
     "dependencies": {
         "json5": "^2.2.3",
@@ -19,7 +22,9 @@
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-typescript": "^11.1.6",
-        "glob": "^10.4.2",
+        "@types/node": "^22.0.0",
+        "dotenv": "^16.4.5",
+        "npm-run-all": "^4.1.5",
         "rollup": "^4.18.0",
         "tslib": "^2.6.3",
         "types-for-adobe": "^7.2.1",

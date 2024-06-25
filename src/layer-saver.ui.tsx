@@ -1,7 +1,10 @@
-// 图层存储，目前支持：形状层、文本层
+/**
+ * 图层导出/导入
+ * 目前支持：形状层、文本层
+ */
 import JSON from 'json5';
 import * as _ from 'soil-ts';
-import { b, u, f } from './cubx.lib';
+import { b, a, f } from './cubx.lib';
 
 const config = {
     /**用户配置 */
@@ -22,7 +25,7 @@ const config = {
     },
 };
 /**属性数据 */
-type PropertyData = {
+type PropertyJson = {
     value?: unknown;
     expression?: string;
     expressionEnabled?: boolean;
@@ -74,11 +77,11 @@ class KeyframeData {
     /**漂浮关键帧 */
     Roving?: boolean;
 }
-const c = {
+const cvt = {
     _any2obj: {
         'object[]'(v: object[]) {
             _.map(v, (e, i, arr) => {
-                c.set_property_data(i, arr[i], arr);
+                cvt.set_property_data(i, arr[i], arr);
             });
             return v;
         },
@@ -90,7 +93,7 @@ const c = {
         },
         TextDocument(v: TextDocument) {
             const obj: Partial<TextDocument> = {};
-            _.map(
+            _.each(
                 (
                     [
                         'applyFill',
@@ -108,6 +111,7 @@ const c = {
                     ] as NonReadonlyKeys<TextDocument>[]
                 ).concat(v.boxText ? ['boxTextPos', 'boxTextSize'] : []),
                 (key) => {
+                    //@ts-ignore
                     obj[key] = v[key];
                 },
             );
@@ -118,14 +122,14 @@ const c = {
         },
         KeyframeData(v: KeyframeData) {
             _.forOwn(v, (value, key, obj) => {
-                c.set_property_data(key, obj[key], obj);
+                cvt.set_property_data(key, obj[key], obj);
             });
             return v;
         },
     },
     _obj2any: {
         'object[]'(v: object[]): any[] {
-            return _.map(v, (e, i, arr) => c.get_property_data(i, arr));
+            return _.map(v, (e, i, arr) => cvt.get_property_data(i, arr));
         },
         MarkerValue(v: Partial<MarkerValue>) {
             return new MarkerValue('');
@@ -148,7 +152,7 @@ const c = {
         KeyframeData(v: Partial<KeyframeData>) {
             const obj = {} as KeyframeData;
             _.forOwn(v, (value, key) => {
-                obj[key] = c.get_property_data(key, v);
+                obj[key] = cvt.get_property_data(key, v);
             });
             return obj;
         },
@@ -183,9 +187,9 @@ const c = {
      * @description 识别成功: 添加 type 属性, 转化 value
      */
     set_property_data(key: string | number, value: any, data: object) {
-        const type = c.type(value);
+        const type = cvt.type(value);
         if (type) {
-            data[key] = c._any2obj[type](value);
+            data[key] = cvt._any2obj[type](value);
             data[key]['@type'] = type;
         } else {
             data[key] = value;
@@ -201,14 +205,14 @@ const c = {
         const type: string | void = value['@type'];
         if (type) {
             delete value['@type'];
-            return c._obj2any[type](value);
-        } else if (c.type(value) === 'object[]') {
-            return c._obj2any['object[]'](value as object[]);
+            return cvt._obj2any[type](value);
+        } else if (cvt.type(value) === 'object[]') {
+            return cvt._obj2any['object[]'](value as object[]);
         }
         return value;
     },
 };
-const l = {
+const lyr = {
     /**
      * 返回不同模式的递归函数
      */
@@ -247,11 +251,11 @@ const l = {
             }: {
                 GroupFn?: (
                     p: PropertyGroup | MaskPropertyGroup,
-                    d: PropertyData,
+                    d: PropertyJson,
                 ) => boolean;
-                PropertyFn?: (p: Property, d: PropertyData) => boolean;
+                PropertyFn?: (p: Property, d: PropertyJson) => boolean;
             },
-        ): (p: _PropertyClasses, d: PropertyData) => void | {};
+        ): (p: _PropertyClasses, d: PropertyJson) => void | {};
         (
             mode: 'set',
             {
@@ -260,11 +264,11 @@ const l = {
             }: {
                 GroupFn?: (
                     p: PropertyGroup | MaskPropertyGroup,
-                    d: PropertyData,
+                    d: PropertyJson,
                 ) => boolean;
-                PropertyFn?: (p: Property, d: PropertyData) => boolean;
+                PropertyFn?: (p: Property, d: PropertyJson) => boolean;
             },
-        ): (p: _PropertyClasses, d: PropertyData) => _PropertyClasses;
+        ): (p: _PropertyClasses, d: PropertyJson) => _PropertyClasses;
     },
     /**
      * 递归获取 PropertyGroup 下的所有 _PropertyClasses
@@ -272,7 +276,7 @@ const l = {
      */
     get_group(
         group: PropertyGroup | MaskPropertyGroup,
-        data: PropertyData,
+        data: PropertyJson,
         recur: (p: _PropertyClasses, d: {}) => void | {},
     ) {
         data['@matchName'] = group.matchName;
@@ -315,7 +319,7 @@ const l = {
                 // property
                 property = group.property(name);
             } else {
-                return abort('属性创建/获取失败:' + name);
+                return a.abort('属性创建/获取失败:' + name);
             }
             recur(property, sub_data);
         });
@@ -326,10 +330,10 @@ const l = {
      */
     get_property(property: Property, data: object = {}) {
         function get(
-            key: keyof PropertyData,
-            defalutValue?: PropertyData[keyof PropertyData],
+            key: keyof PropertyJson,
+            defalutValue?: PropertyJson[keyof PropertyJson],
         ) {
-            c.set_property_data(key, property[key] ?? defalutValue, data);
+            cvt.set_property_data(key, property[key] ?? defalutValue, data);
         }
         if (!property.canVaryOverTime) {
             // 不能设置 关键帧或表达式
@@ -356,10 +360,10 @@ const l = {
         }
         return data;
     },
-    set_property(property: Property, data: PropertyData) {
-        const obj: PropertyData = {};
+    set_property(property: Property, data: PropertyJson) {
+        const obj: PropertyJson = {};
         _.forOwn(data, (value, key) => {
-            obj[key] = c.get_property_data(key, data);
+            obj[key] = cvt.get_property_data(key, data);
         });
         const { value, expression, expressionEnabled, keys } = obj;
         if (value != null) {
@@ -449,7 +453,7 @@ const l = {
         return property;
     },
     get_layer(layer: Layer, propertyNames: (keyof Layer)[] = []) {
-        const data: PropertyData = {};
+        const data: PropertyJson = {};
         _.map(
             (
                 [
@@ -470,7 +474,7 @@ const l = {
                 data[key] = layer[key];
             },
         );
-        function defaultFn(p: _PropertyClasses, d: PropertyData) {
+        function defaultFn(p: _PropertyClasses, d: PropertyJson) {
             if (p.isModified) {
                 if (p.canSetEnabled && !p.enabled) {
                     d['enabled'] = false;
@@ -478,10 +482,10 @@ const l = {
                 return true;
             }
         }
-        l.get_group(
+        lyr.get_group(
             layer,
             data,
-            l.recur_factory('get', {
+            lyr.recur_factory('get', {
                 GroupFn(p, d) {
                     switch (p.parentProperty.matchName) {
                         case 'ADBE Root Vectors Group':
@@ -536,7 +540,7 @@ const l = {
         return data;
     },
     set_layer(layer: Layer, data: {}) {
-        return l.set_group(layer, data, l.recur_factory('set', {}));
+        return lyr.set_group(layer, data, lyr.recur_factory('set', {}));
     },
 };
 const matchTypes = {
@@ -545,15 +549,15 @@ const matchTypes = {
     'ADBE Camera Layer': 'Camera',
     'ADBE Light Layer': 'Light',
 };
-const h = {
-    import_layer(data: PropertyData) {
+const hlp = {
+    import_layer(data: PropertyJson) {
         const layer = b.add_layer(matchTypes[data['@matchName']]);
-        l.set_layer(layer, data);
+        lyr.set_layer(layer, data);
         return layer;
     },
     export_layer(layer: Layer) {
         if (layer.parent) {
-            abort('抱歉，暂不支持导出有父级图层的图层');
+            a.abort('抱歉，暂不支持导出有父级图层的图层');
         }
         const propertyNames: (keyof AVLayer)[] = [
             'adjustmentLayer',
@@ -589,18 +593,18 @@ const h = {
             case 'Camera':
             case 'Light':
             default:
-                abort('图层类型错误: ' + layer.matchName);
+                a.abort('图层类型错误: ' + layer.matchName);
         }
-        return l.get_layer(layer, propertyNames);
+        return lyr.get_layer(layer, propertyNames);
     },
     config_read() {
-        config.user = JSON.parse(f.read(p.user_config()));
+        config.user = JSON.parse(f.read(pth.user_config()));
     },
     config_write() {
-        f.write(p.user_config(), JSON.stringify(config.user));
+        f.write(pth.user_config(), JSON.stringify(config.user));
     },
 };
-const p = {
+const pth = {
     layers: () => [config.root_path, config.name, 'layers'].join('\\'),
     download: () =>
         [config.root_path, config.name, config.name + '.jsx'].join('\\'),
@@ -613,84 +617,109 @@ const p = {
         ].join('\\'),
     user_config: () => [config.root_path, config.name, 'user.cfg'].join('\\'),
 };
-const a = {
+const app = {
     init() {
-        const file = f.repair_path(p.user_config());
-        file.exists ? h.config_read() : h.config_write();
-        config.user.auto_updata && a.update();
+        const file = f.repair_path(pth.user_config());
+        file.exists ? hlp.config_read() : hlp.config_write();
+        config.user.auto_updata && app.update();
     },
     import() {
         const datas = f.open({
-            path: p.layers(),
+            path: pth.layers(),
             filter: '*.json',
             multi: true,
         });
         if (!datas) return;
         _.forOwn(datas, (value) => {
-            h.import_layer(JSON.parse(value));
+            hlp.import_layer(JSON.parse(value));
         });
     },
     export() {
         const layers = b.get_selected_layers();
         const datas: Record<string, string> = {};
         _.map(layers, (layer) => {
-            const data = h.export_layer(layer);
+            const data = hlp.export_layer(layer);
             datas[layer.name + '.json'] = JSON.stringify(data)
                 .replace(/\[\s+\]/g, '[]')
                 .replace(/\{\s+\}/g, '{}');
         });
-        f.save(datas, { path: p.layers() });
+        f.save(datas, { path: pth.layers() });
     },
-    UI() {
-        function btn(
-            node: Window | Panel | Group,
-            icon: string,
-            fn?: () => void,
-        ) {
-            return _.assign(u.iconbutton(node, icon), {
-                preferredSize: [30, 30],
-                onClick: fn && b.set_undo_group(fn),
-            });
-        }
-        const win = _.assign(u.palette(that), { spacing: -10 });
-        btn(win, File.decode(config.icons.import), a.import);
-        btn(win, File.decode(config.icons.export), a.export);
-        btn(win, File.decode(config.icons.setting)).onClick = function () {
-            h.config_read();
-            const { user } = config;
-            const win = _.assign(
-                u.dialog(null, config.name + ' ' + config.version),
-                {
+    UI: () => {
+        const _this = this;
+        function setting() {
+            hlp.config_read();
+            const { user, name, version } = config;
+            _.tree.parse({
+                style: {
+                    text: `${name} ${version}`,
                     margins: 10,
                 },
-            );
-            const panel = u.panel(win, '更新');
-            _.assign(u.button(panel, '检查更新'), {
-                alignment: 'fill',
-                onClick: a.update,
-            });
-            _.assign(u.checkbox(panel, '每次启动时检查更新'), {
-                value: user.auto_updata,
-                onClick(this: Checkbox) {
-                    user.auto_updata = this.value;
+                panel: {
+                    style: { text: '更新' },
+                    button: {
+                        style: {
+                            text: '检查更新',
+                            alignment: 'fill',
+                            onClick: app.update,
+                        },
+                    },
+                    checkbox: {
+                        style: {
+                            text: '每次启动时检查更新',
+                            value: user.auto_updata,
+                            onClick(this: Checkbox) {
+                                user.auto_updata = this.value;
+                            },
+                        },
+                    },
+                },
+                button: {
+                    style: {
+                        text: 'OK',
+                        alignment: 'fill',
+                        onClick() {
+                            hlp.config_write();
+                            //@ts-ignore
+                            _this.close();
+                        },
+                    },
                 },
             });
-            _.assign(u.button(win, 'OK'), {
-                alignment: 'fill',
-                onClick() {
-                    h.config_write();
-                    win.close();
+        }
+        const ui = _.reduce(
+            [
+                [File.decode(config.icons.import), app.import],
+                [File.decode(config.icons.export), app.export],
+                [File.decode(config.icons.setting), setting],
+            ] as const,
+            (acc, [icon, fn], i) =>
+                _.assign(acc, {
+                    ['iconbutton' + i]: {
+                        param: [, , icon, { style: 'toolbutton' }],
+                        style: {
+                            preferredSize: [30, 30],
+                            onClick: fn && (() => _.setUndoGroup('', fn)),
+                        },
+                    },
+                }),
+            {
+                style: {
+                    orientation: 'column',
+                    alignChildren: 'center',
+                    margins: 0,
+                    spacing: 0,
                 },
-            });
-            u.show(win);
-        };
-        u.show(win);
+            } as Data,
+        );
+        _.tree.context = this;
+        _.tree.parse(ui);
     },
     update() {
         if ($.os.indexOf('Windows') === -1) {
             return alert('更新失败: 只支持Windows系统');
         }
-        const filePath = p.download();
+        const filePath = pth.download();
         system.callSystem(
             'cmd /c powershell -Command "echo ' +
                 config.name +
@@ -711,7 +740,7 @@ const a = {
         if (version === config.version) {
             file.remove();
             alert('已是最新版', version);
-        } else if (file.copy(p.local())) {
+        } else if (file.copy(pth.local())) {
             file.remove();
             alert('更新完成: 请重启程序', version);
         } else {
@@ -719,5 +748,5 @@ const a = {
         }
     },
 };
-a.init();
-a.UI();
+app.init();
+app.UI();
