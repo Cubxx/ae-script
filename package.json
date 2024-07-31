@@ -7,10 +7,10 @@
     "license": "ISC",
     "type": "module",
     "scripts": {
-        "launch": "node script/launch.js",
+        "ae": "node script/launch.js",
         "readme": "node script/readme.js",
         "dev-only": "set NODE_ENV=dev&& rollup -c -w",
-        "dev": "run-p launch dev-only",
+        "dev": "run-p ae dev-only",
         "build": "set NODE_ENV=prod&& rollup -c && npm run readme",
         "i": "powershell ./setup.ps1"
     },

@@ -1,48 +1,26 @@
 // 自制工具面板
 import * as _ from 'soil-ts';
-import { b } from './cubx.lib';
+import { t } from './util';
 
-function fix_expression() {
-    const map = [
-        ['点', 'Point'],
-        ['3D点', '3D Point'],
-        ['角度', 'Angle'],
-        ['滑块', 'Slider'],
-        ['颜色', 'Color'],
-        ['复选框', 'Checkbox'],
-        ['菜单', 'Menu'],
-        ['图层', 'Layer'],
-    ];
-    const fix = {
-        zh_CN() {
-            _.map(map, ([zh, en]) => app.project.autoFixExpressions(en, zh));
-        },
-        en_US() {
-            _.map(map, ([zh, en]) => app.project.autoFixExpressions(zh, en));
-        },
-    };
-    if (_.has(fix, app.isoLanguage)) {
-        //@ts-ignore
-        fix[app.isoLanguage]();
-    }
-}
 const ui = _.reduce(
     [
-        ['UC', b.unpack_selected_comps],
-        ['UL', b.unpack_selected_layers],
-        ['AS', b.add_solid_layer],
-        ['AA', b.add_adjustment_layer],
-        ['AN', b.add_null_layer],
-        ['AG', b.add_layers_from_selected_groups],
-        ['R', b.render_selected_comps],
-        ['F', fix_expression],
-    ] as const,
-    (acc, [text, fn], i) => {
+        ['UC', 'unpack_selected_comps'],
+        ['UL', 'unpack_selected_layers'],
+        ['AS', 'add_solid_layer'],
+        ['AA', 'add_adjustment_layer'],
+        ['AN', 'add_null_layer'],
+        ['AG', 'add_layers_from_selected_groups'],
+        ['R', 'render_selected_comps'],
+        ['F', 'simple_fix_expression'],
+        ['SM', 'show_matchname'],
+    ] satisfies [string, keyof typeof t][],
+    (acc, [text, helpTip], i) => {
         acc['button' + i] = {
             style: {
                 text,
+                helpTip,
                 preferredSize: [30, 30],
-                onClick: () => _.setUndoGroup(text, fn),
+                onClick: () => _.setUndoGroup(text, t[helpTip]),
             },
         };
         return acc;

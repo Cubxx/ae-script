@@ -27,7 +27,7 @@ export const a = {
         const group_info_arr = _.filter(
             _.map(array, (e, i) => {
                 if (e instanceof PropertyGroup) {
-                    // return _.pick(e, ['parentProperty', 'propertyIndex']);
+                    // return _.pick(e,  'propertyIndex');
                     const { parentProperty, propertyIndex } = e;
                     return { parentProperty, propertyIndex };
                 } else {
@@ -48,34 +48,30 @@ export const a = {
     },
 };
 /**工具箱模块 */
-export const b = {
+export const t = {
     // get
     get_active_comp() {
         const comp = app.project.activeItem;
         return comp instanceof CompItem
             ? comp
-            : a.abort('请在时间轴上打开合成');
+            : a.abort('Please select a comp');
     },
     get_selected_comps() {
         const comps = _.filter(
             app.project.selection,
-            (e): e is CompItem => e instanceof CompItem,
+            (e) => e instanceof CompItem,
         );
-        a.checkLength(comps, '请在项目面板中选择合成');
+        a.checkLength(comps, 'Please select comps in project panel');
         return comps;
     },
     get_selected_layers() {
-        const layers = b.get_active_comp().selectedLayers;
-        a.checkLength(layers, '请选择图层');
+        const layers = t.get_active_comp().selectedLayers;
+        a.checkLength(layers, 'Please select layers');
         return layers;
     },
     get_selected_properties() {
-        const layers = b.get_selected_layers();
-        let properties: _PropertyClasses[] = [];
-        _.each(layers, (layer) => {
-            properties = properties.concat(layer.selectedProperties);
-        });
-        return properties;
+        const layers = t.get_selected_layers();
+        return _.flatMap(layers, (layer) => layer.selectedProperties);
     },
     //add layer
     add_layer: function (type = 'Shape') {
@@ -89,7 +85,7 @@ export const b = {
         (type: string): void;
     },
     add_solid_layer(bgColor = [0.5, 0.5, 0.5, 1]) {
-        const layer = b.add_layer();
+        const layer = t.add_layer();
         layer.name = 'Solid';
         const contents = layer.property(
             'ADBE Root Vectors Group',
@@ -107,17 +103,17 @@ export const b = {
         return layer;
     },
     add_adjustment_layer() {
-        const layer = b.add_solid_layer();
+        const layer = t.add_solid_layer();
         layer.name = 'Adjustment';
         layer.label = 5;
         layer.adjustmentLayer = true;
         return layer;
     },
     add_null_layer() {
-        const layer = b.add_layer();
+        const layer = t.add_layer();
         layer.name = 'Null';
         layer.label = 1;
-        layer.transform.scale.expression = '[100, 100]';
+        layer.transform.scale.expression = ' 100';
         layer.transform.opacity.setValue(0);
         const contents = layer.property(
             'ADBE Root Vectors Group',
@@ -128,7 +124,7 @@ export const b = {
     add_layer_from_group(group: PropertyGroup) {
         const layer = group.propertyGroup(2);
         if (!(layer instanceof ShapeLayer)) {
-            a.abort('请选择 形状层 - 内容(Contents) 的子属性组');
+            return a.abort('Please select ShapeLayer > Contents > Group');
         }
         const new_layer = layer.duplicate() as ShapeLayer;
         new_layer.name = [layer.name, group.name].join(' - ');
@@ -143,14 +139,17 @@ export const b = {
         return new_layer;
     },
     add_layers_from_selected_groups() {
-        const properties = b.get_selected_properties();
+        const properties = t.get_selected_properties();
         const groups = _.filter(
             properties,
             (e): e is PropertyGroup =>
                 e instanceof PropertyGroup && !(e instanceof MaskPropertyGroup),
         );
-        a.checkLength(groups, '请选择属性组(除蒙版以外)');
-        const beDels = _.map(groups, (e) => (b.add_layer_from_group(e), e));
+        a.checkLength(
+            groups,
+            'Please select PropertyGroups, MaskPropertyGroup is not allowed',
+        );
+        const beDels = _.map(groups, (e) => (t.add_layer_from_group(e), e));
         a.emptyArray(beDels);
     },
     // unpack
@@ -165,7 +164,7 @@ export const b = {
         comp_layer.selected = false;
     },
     unpack_selected_comps() {
-        const layers = b.get_selected_layers();
+        const layers = t.get_selected_layers();
         const comp_layers = _.filter(
             layers,
             (layer): layer is AVLayer & { source: CompItem } => {
@@ -175,10 +174,10 @@ export const b = {
                 );
             },
         );
-        a.checkLength(comp_layers, '请选择合成图层');
+        a.checkLength(comp_layers, 'Please select Comp layers');
         const beDels = _.map(
             comp_layers,
-            (e, i) => (b.unpack_comp(e), e.source),
+            (e, i) => (t.unpack_comp(e), e.source),
         );
         a.emptyArray(beDels);
     },
@@ -195,20 +194,20 @@ export const b = {
         });
         a.checkLength(
             group_array,
-            `${layer.name} 图层只有 ${group_array.length} 个属性组`,
+            `${layer.name} layer only has ${group_array.length} Groups`,
             2,
         );
-        _.map(group_array, b.add_layer_from_group);
+        _.map(group_array, t.add_layer_from_group);
         layer.selected = false;
     },
     unpack_selected_layers() {
-        const layers = b.get_selected_layers();
+        const layers = t.get_selected_layers();
         const shape_layers = _.filter(layers, (e): e is ShapeLayer => {
             e.selected = false;
             return e instanceof ShapeLayer;
         });
-        a.checkLength(shape_layers, '请选择形状图层');
-        const beDels = _.map(shape_layers, (e) => (b.unpack_layer(e), e));
+        a.checkLength(shape_layers, 'Please select ShapeLayers');
+        const beDels = _.map(shape_layers, (e) => (t.unpack_layer(e), e));
         a.emptyArray(beDels);
     },
     // render
@@ -217,21 +216,21 @@ export const b = {
         app.project.renderQueue.render();
     },
     render_active_comp() {
-        b.render_comp(b.get_active_comp());
+        t.render_comp(t.get_active_comp());
     },
     render_selected_comps() {
-        _.map(b.get_selected_comps(), b.render_comp);
+        _.map(t.get_selected_comps(), t.render_comp);
     },
     render_comp(comp: CompItem) {
         const item = app.project.renderQueue.items.add(comp);
-        b.render_setting(item);
+        t.render_setting(item);
         item.render = true;
     },
     render_setting(item: RenderQueueItem) {
         // item.setSettings({});
         // item.outputModule(1).applyTemplate('Template');
         if (!app.project.file) {
-            return alert('请先保存项目');
+            return alert('Please save the project first');
         }
         item.outputModule(1).setSettings({
             'Output File Info': {
@@ -240,6 +239,40 @@ export const b = {
                 'File Name': item.comp.name,
             },
         });
+    },
+    // expression fix
+    show_matchname() {
+        let selected: _PropertyClasses[] = [];
+        for (const fn of [
+            () => t.get_selected_properties(),
+            () => t.get_selected_layers(),
+        ]) {
+            selected = fn();
+            if (selected.length) break;
+        }
+        const matchanmes = _.map(selected, (item) => item.matchName);
+        prompt('You can copy them', matchanmes.join('; '), 'MatchNames');
+    },
+    simple_fix_expression() {
+        // expression_controls
+        _.forOwn(
+            {
+                '3D Point': 'ADBE Point3D Control',
+                Angle: 'ADBE Angle Control',
+                Checkbox: 'ADBE Checkbox Control',
+                Color: 'ADBE Color Control',
+                Layer: 'ADBE Layer Control',
+                Point: 'ADBE Point Control',
+                Slider: 'ADBE Slider Control',
+                // in AE 2024
+                'Dropdown Menu': 'Pseudo/@@ABzbw5g3TlyO2XPLzAXD9w',
+                Menu: 'Pseudo/@@ABzbw5g3TlyO2XPLzAXD9w',
+            },
+            (v, k) => {
+                app.project.autoFixExpressions(`${k} Control`, v);
+                app.project.autoFixExpressions(k, `${v}-0001`);
+            },
+        );
     },
 };
 /**文件模块 */
@@ -254,7 +287,10 @@ export const f = {
     },
     write(path: string | File, text: string) {
         const file = path instanceof File ? path : f.repair_path(path);
-        // if (file.exists && !confirm('发现同名文件, 是否覆盖?\n' + file.name)) {
+        // if (
+        //     file.exists &&
+        //     !confirm('Find same name file, should replace it? ' + file.name)
+        // ) {
         //     return;
         // }
         file.encoding = 'utf-8';
@@ -296,13 +332,13 @@ export const f = {
             f.write(folder.fsName + '\\' + name, text);
         });
     },
-    /**检查路径是否存在，不存在则创建路径 */
+    /**Check if the path exists, if not, create the path */
     repair_path: ((path: string, type = 'file') => {
         function create_folder<T>(folder: Folder, result: T): T {
             if (folder.exists || folder.create()) {
                 return result;
             } else {
-                return a.abort('文件夹创建失败');
+                return a.abort('Failed to create folder: ' + folder.fsName);
             }
         }
         switch (type) {

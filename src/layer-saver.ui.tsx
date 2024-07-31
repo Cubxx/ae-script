@@ -4,7 +4,7 @@
  */
 import JSON from 'json5';
 import * as _ from 'soil-ts';
-import { b, a, f } from './cubx.lib';
+import { t, a, f } from './util';
 
 const config = {
     /**用户配置 */
@@ -551,7 +551,7 @@ const matchTypes = {
 };
 const hlp = {
     import_layer(data: PropertyJson) {
-        const layer = b.add_layer(matchTypes[data['@matchName']]);
+        const layer = t.add_layer(matchTypes[data['@matchName']]);
         lyr.set_layer(layer, data);
         return layer;
     },
@@ -635,7 +635,7 @@ const app = {
         });
     },
     export() {
-        const layers = b.get_selected_layers();
+        const layers = t.get_selected_layers();
         const datas: Record<string, string> = {};
         _.map(layers, (layer) => {
             const data = hlp.export_layer(layer);
