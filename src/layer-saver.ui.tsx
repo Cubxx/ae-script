@@ -4,749 +4,695 @@
  */
 import JSON from 'json5';
 import * as _ from 'soil-ts';
-import { t, a, f } from './util';
+import { a, f, t } from './util';
 
 const config = {
-    /**用户配置 */
-    user: {
-        auto_updata: true,
-    },
-    name: 'LayerSaver',
-    version: 'v1.0',
-    updata_url:
-        'https://raw.githubusercontent.com/Cubxx/My-AfterEffect-Script/main/dist/UI/LayerSaver.jsx',
-    root_path: Folder.myDocuments.fsName,
-    // https://extendscript.docsforadobe.dev/file-system-access/file-object.html#decode
-    icons: {
-        import: "%C2%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%18%00%00%00%18%08%06%00%00%00%C3%A0w%3D%C3%B8%00%00%00%09pHYs%00%00%0E%C3%83%00%00%0E%C3%83%01%C3%87o%C2%A8d%00%00%00%19tEXtSoftware%00www.inkscape.org%C2%9B%C3%AE%3C%1A%00%00%01%06IDATH%C2%89%C3%AD%C3%95%C2%B1J%C3%83P%14%06%C3%A0%C2%AF%C2%AD%08%C2%82%C2%AB%C3%AD%23%18PQp%C3%AB%22%05_%C3%87%07%C3%AB%C3%A0%C3%AA%26%C3%A2%03%08%1D%C2%AB%2FPpvq%C3%90%C3%AB%C3%A0%09%C3%9Eh%C2%9A%26%C2%81%C2%82C%7F%C3%B89I%C3%8E9%C3%BF%7F%C3%AF!%C2%B9%19%C2%A4%C2%94l%13%C3%83%C2%AD%C2%AA%C3%B70%C2%B8%09%C2%B6%C3%86%C2%A0%C3%A3%C2%88%1E%22%C3%8E%C3%9A6%C3%BC%C2%BB%11%C3%AD%0Cv%06%C3%9D%0C%C3%86%C2%B8E%C3%91PSD%C3%8D%C2%B8%C2%8F%01L%7D%7F%5Cu%26E%C3%A4%C2%A6M%02M%06%C2%AF%C2%B8%C3%82'%1Eq%C2%92%C3%A5%C2%8Eq%C2%8F%01%C2%AE%C2%A3%C2%B6%16m%C2%8E%C2%8Ar%C2%A5%C3%B0%16%C3%B10%C3%A2%0C%C3%8B%C3%86%C3%AE%C2%94R%C3%89%C2%A3%C2%A0%1A%16)%C2%A5U%C3%BA%C3%81*%C2%9E%C3%95%C3%95Vt%C3%B2%C3%84%5D%C2%B0%C2%AE)7i%12%C3%BF%C2%A3%C2%B3%C2%97m%C3%A6%60%C3%83%C2%A8%C2%968%C2%8F%C3%AB%C2%B53%C3%BF%C2%AD%C2%93%1B%24%C2%8C6%C2%984%09%C2%97%18%C3%A2%23%C2%BF)%C3%B1%C2%82SLZ%C2%88%C2%AC%C3%83%04g%C2%A1%C2%85%C3%AA%5BT%C3%A0%09%C3%AFX%C3%A4%C2%ABh%C2%89%11.%C2%B0%C2%8FK%3CS%C3%9D%C3%812%12%C3%B3%1E%C3%A2%C2%A2g%C2%9E%C2%8B%C3%93%C3%BD%C2%97%C3%99%19%5B%3F%C3%AC%C2%BE%00%7B%7D%C3%87%C2%97%C3%97%C3%B7%05%0E%00%00%00%00IEND%C2%AEB%60%C2%82",
-        export: '%C2%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%18%00%00%00%18%08%06%00%00%00%C3%A0w%3D%C3%B8%00%00%00%09pHYs%00%00%0E%C3%83%00%00%0E%C3%83%01%C3%87o%C2%A8d%00%00%00%19tEXtSoftware%00www.inkscape.org%C2%9B%C3%AE%3C%1A%00%00%00%C3%ACIDATH%C2%89%C3%AD%C2%95%C3%81%09%C3%82%40%10E_%C2%8C%08%16%20%C2%B6%20b%40%C2%B0%0B%C2%9B%C2%B0%13%C2%AFzK%0D%1E%C2%ADB%1B%10%3C%C2%89%C3%9A%C2%82%05%C2%88%C2%88%C2%8C%C2%97%C2%91%C3%8CJ4cd%C3%81%C2%83%1F%C2%86%C2%B0%C3%99%C2%9D%C3%B7%C2%B2%C2%B0K%12%11!f%1AQ%C3%A95%04S-%7FD%C3%84%5B%C2%B9%14%C3%89%C2%BD%7D%C2%9F%C3%82%C2%AFZn%C2%89%07%3E7%C3%80%C2%B5%C2%88%C2%ACDdf%C3%9E%25%C3%9F%08r%03B%C3%A1%C2%AB%17s%1F%0B%C2%B2%12%C2%80%15XIVw%07%C3%BD%C2%A7%C3%B1%C2%B3%C2%A0lMPU%C3%87t%C3%A78%C2%88o%C3%97%C3%BC%C3%9CE%C3%BB%0B%C3%A2%0A%3AZ%C3%9F%26%C3%A04%C3%8D%C3%84B%C2%9F%C3%A37%C3%8Dg%C2%87%20%C3%A0XA%C3%9B%C3%91%3Cq%C2%AC%098V%20%40Z%C3%91%7Cr%08%1A%C3%80%C3%8D%0E%1E9%02%03%C2%A0%C3%AB%C2%80%C2%BCJ%17%C3%88%C2%94%05%40%22%C3%85%3F%C2%B9%07l%C2%80%0B%C2%B0%C2%B5_%C3%A1L%0A%0C%C2%81%160%02%0E%10%C3%AE%60%C2%AF%13%C3%8B%1Ap%C2%B4gi%C3%A1%10%C3%AE%20J%C2%A2_%C2%B4%3B%C3%81n%C3%A7%C2%99%C3%97X!%20%00%00%00%00IEND%C2%AEB%60%C2%82',
-        setting:
-            "%C2%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%18%00%00%00%18%08%06%00%00%00%C3%A0w%3D%C3%B8%00%00%00%09pHYs%00%00%0E%C3%83%00%00%0E%C3%83%01%C3%87o%C2%A8d%00%00%00%19tEXtSoftware%00www.inkscape.org%C2%9B%C3%AE%3C%1A%00%00%01%C3%8AIDATH%C2%89%C2%B5%C2%961OTA%10%C3%87%7F%C3%8F%1C%0D%C3%98%5C%C2%BCB%13%40L%2C%C3%BD%02%C3%84%0Eb)%C2%85V%C2%B4B%C3%81%C3%A9U%C3%9A%C3%B3%254%C3%A1%1B(%C2%B1C%0B*%0B!!%C3%81%C2%B34jabB%C2%A3%05t'R%20%3F%C2%8B%1B%C3%A2%C3%B2%C3%9Cw%C3%AF%12%C3%B2%26%C2%99%C3%A4%C3%AD%7F%C3%BF%3B%C2%B3%3B%3B3%C3%BB%0A%C2%95%26%C3%A5J%C2%A3%C3%96%C2%81%C3%96%C2%98%C2%BC%C2%BB%40%0F%C3%A8%C3%84%C3%B8%10x%0E%C3%AC%C3%95-%2C%C3%86%08%C3%91U%C3%A0%1B0%00%C2%BE%07v%2B%C3%B0%C3%9B%C2%81W%C2%8BZ%C2%A7%0B%0Ee%C2%A1%06%C3%8Bj%0E%5CT%C3%B7%C3%95%1D%C3%B5%C2%A9%C2%BA%C2%AD%C3%BEV%C3%9B%09%C2%A7%1D%C3%98vpvb%C3%8D%C2%BD%3A%07%C2%B3%C3%AA%2F%C2%B5%C2%AF~%C2%88%5D%0E%C3%94G%C2%99%C2%8D%C2%AC%C3%84%C2%9C%C3%81%C3%AD%C2%AB%C3%87%C3%AA%C3%8DQ%0E%5E%C2%85%C2%83%C2%99%18w%C3%94%C3%89%11!%C2%98%0A%0E%C3%AAt8%C3%9C%C2%ACr0%C2%A7%C2%9E%C2%A9%C3%AB%19C-uM%7D%1D%C2%BA%16X%C2%99%C2%B7%1E6%C3%A6%C3%8E%C2%B1%C2%B4%0En%00E%C2%A4%60*-%C3%A0%1D%C2%B0%01%C3%9C%09%C3%9D%08%C2%AC%C2%9C%C3%A6Ga%C3%A3zU%16%C2%BD%C2%89%1D%C3%B4%12%C2%AC%1B%C3%98r%C2%82-%07%C3%96M%C2%B0%5E%60%5B%C2%A3%C3%AE%60B%7D%C2%AB%1E%C2%96%C3%AE%C3%A5K%26%1C_%C3%95%C2%97%C3%89%C3%B8(%C3%96N%C2%A4%C2%BC%C2%AAVa%C3%A9%C2%BB%C3%88p%C2%8A%0C%2Fc%C3%A9%C3%A2%C2%AE%C2%B6%C2%9A%0C%C3%91%C2%BCCy%C2%9C%C3%89%C2%A0%C3%B71%C3%B79%C3%94%C3%80%C3%8A%C2%99%C3%B4%24%C3%A6%C3%A6s!%C3%BA%11%C3%87%C3%AC%C2%94%0Ey%0A%2C%02%5D%C3%A0Sh7%C2%B0%C3%93%12%C3%B7Z%C3%98%C3%B8Y%15%C2%A2M%C2%87%C2%856%C3%AD%C2%BFB%C2%9B%C3%8A%5Cp%C2%AE%C3%90fbme%C2%A1%C2%9D%C2%B7%C2%8Ac%C3%BFo%15%2B%19%C3%A3%C2%AB%5El%15%1F%C3%83%C3%81%C3%AC%C2%A8%2C%3A%00%C3%AE%03g%C3%80%09%C3%B0%0C%C3%98%05%5E%00%C3%AD%C2%84%C3%97f%C3%B8%1E%C3%AC%06%C3%A7%04%C3%B8%03%2C%C2%85%C2%8D%C3%8A%2C%C3%8A%C3%A9%C2%A5%C3%9Au%C3%A3%0F%C3%8E8o%C3%B2%00x%08%C3%B4%13%C2%AC%0F%3C%C2%A83%0E%C3%A3%3D%C2%99%C2%97%C2%92%C3%86%C3%BF*%C3%BE%02%1D%C3%95%C3%A0%C3%AE%C2%95%C3%9E%02%C3%92%00%00%00%00IEND%C2%AEB%60%C2%82",
-    },
+  version: '1.0.0',
+  icons: {
+    import:
+      '\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x18\x00\x00\x00\x18\b\x06\x00\x00\x00àw=ø\x00\x00\x00\tpHYs\x00\x00\x0EÃ\x00\x00\x0EÃ\x01Ço¨d\x00\x00\x00\x19tEXtSoftware\x00www.inkscape.org\x9Bî<\x1A\x00\x00\x01\x06IDATH\x89íÕ±JÃP\x14\x06à¯­\b\x82«í#\x18PQpë"\x05_Ç\x07ëàê&â\x03\b\x1D«/PpvqÐëà\tÞh\x9A&\x81\x82C\x7Fø9IÎ9ÿ\x7Fï!¹\x19¤\x94l\x13Ã­ª÷0¸\t¶Æ ã\x88\x1E"ÎÚ6ü»\x11í\fv\x06Ý\fÆ¸EÑPSDÍ¸\x8F\x01L}\x7F\\u&Eä¦M\x02M\x06¯¸Â\'\x1Eq\x92å\x8Eq\x8F\x01®£¶\x16m\x8E\x8Ar¥ð\x16ñ0â\fËÆî\x94RÉ£ \x1A\x16)¥UúÁ*\x9EÕÕVtòÄ]°®)7i\x12ÿ£³\x97mæ`Ã¨\x968\x8Fëµ3ÿ­\x93\x1B$\x8C6\x984\t\x97\x18â#¿)ñ\x82SLZ\x88¬Ã\x04g¡\x85ê[Tà\tïXä«h\x89\x11.°\x8FK<SÝÁ2\x12ó\x1Eâ¢g\x9E\x8BÓý\x97Ù\x19[?ì¾\x00{}Ç\x97×÷\x05\x0E\x00\x00\x00\x00IEND®B`\x82',
+    export:
+      '\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x18\x00\x00\x00\x18\b\x06\x00\x00\x00àw=ø\x00\x00\x00\tpHYs\x00\x00\x0EÃ\x00\x00\x0EÃ\x01Ço¨d\x00\x00\x00\x19tEXtSoftware\x00www.inkscape.org\x9Bî<\x1A\x00\x00\x00ìIDATH\x89í\x95Á\tÂ@\x10E_\x8C\b\x16 ¶ b@°\v\x9B°\x13¯zK\r\x1E­B\x1B\x10<\x89Ú\x82\x05\x88\x88\x8C\x97\x91ÌJ4cdÁ\x83\x1F\x86°Ù\x9D÷²°K\x12\x11!f\x1AQé5\x04S-\x7FDÄ[¹\x14É½}\x9FÂ¯Zn\x89\x07>7Àµ\x88¬DdfÞ%ß\br\x03Bá«\x17s\x1F\v²\x12\x80\x15XIVw\x07ý§ñ³ lMPUÇtç8\x88o×üÜEû\vâ\n:Zß&à4ÍÄB\x9Fã7Íg\x87 àXAÛÑ<q¬\t8V @ZÑ|r\b\x1AÀÍ\x0E\x1E9\x02\x03 ë\x80¼J\x17È\x94\x05@"Å?¹\x07l\x80\v°µ_áL\n\f\x81\x160\x02\x0E\x10î`¯\x13Ë\x1Ap´giá\x10î J¢_´;Ánç\x99×X! \x00\x00\x00\x00IEND®B`\x82',
+    setting:
+      "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x18\x00\x00\x00\x18\b\x06\x00\x00\x00àw=ø\x00\x00\x00\tpHYs\x00\x00\x0EÃ\x00\x00\x0EÃ\x01Ço¨d\x00\x00\x00\x19tEXtSoftware\x00www.inkscape.org\x9Bî<\x1A\x00\x00\x01ÊIDATH\x89µ\x961OTA\x10Ç\x7FÏ\x1C\rØ\\¼B\x13@L,ý\x02Ä\x0Eb)\x85V´BÁéUÚó%4á\x1B(±C\v*\v!!Á³4jabB£\x05t'R ?\x8B\x1BâòÜwï\x12ò&\x99äí\x7Fÿ;³;;3û\n\x95&åJ£Ö\x81Ö\x98¼»@\x0FèÄø\x10x\x0EìÕ-,Æ\bÑUà\x1B0\x00¾\x07v+ðÛ\x81W\x8BZ§\v\x0Ee¡\x06Ëj\x0E\\T÷Õ\x1Dõ©º­þVÛ\t§\x1DØvpvbÍ½:\x07³ê/µ¯~\x88]\x0EÔG\x99\x8D¬Ä\x9CÁí«ÇêÍQ\x0E^\x85\x83\x99\x18wÔÉ\x11!\x98\n\x0Eêt8Ü¬r0§\x9E©ë\x19C-uM}\x1Dº\x16X\x99·\x1E6æÎ±´\x0En\x00E¤`*-à\x1D°\x01Ü\tÝ\b¬\x9CæGaãzU\x16½\x89\x1Dô\x12¬\x1BØr\x82-\x07ÖM°^`[£î`B}«\x1E\x96îåK&\x1C_Õ\x97Éø(ÖN¤¼ªVaé»Èp\x8A\f/céâ®¶\x9A\fÑ¼Cy\x9CÉ ÷1÷9ÔÀÊ\x99ô$ææs!ú\x11Çì\x94\x0Ey\n,\x02]àSh7°Ó\x12÷ZØøY\x15¢M\x87\x856í¿B\x9BÊ\\p®Ðfbme¡\x9D·\x8Acÿo\x15+\x19ã«^l\x15\x1FÃÁì¨,:\x00î\x03gÀ\tð\fØ\x05^\x00í\x84×fø\x1Eì\x06ç\x04ø\x03,\x85\x8DÊ,Êé¥Úuã\x0FÎ8oò\x00x\bô\x13¬\x0F<¨3\x0Eã=\x99\x97\x92Æÿ*þ\x02\x1DÕàî\x95Þ\x02Ò\x00\x00\x00\x00IEND®B`\x82",
+  },
+  pth: (() => {
+    const name = 'layer-saver.ui.jsx';
+    const root = Folder.myDocuments.fsName + '/' + name.split('.')[0];
+    return {
+      config_data: root + '/user.cfg',
+      layers: root + '/layers',
+      update: {
+        download_from:
+          'https://raw.githubusercontent.com/Cubxx/ae-script/main/dist/' + name,
+        download_to: root + '/' + name,
+        move_to: Folder.appPackage.fsName + '/Scripts/ScriptUI Panels/' + name,
+      },
+    };
+  })(),
+  /**配置数据 */
+  data: { auto_updata: true },
+  syncData() {
+    const filepath = config.pth.config_data;
+    const file = f.new(filepath);
+    const write = () => {
+      f.writeJson(filepath, config.data);
+    };
+    if (file.exists) {
+      config.data = f.readJson(filepath);
+    } else {
+      write();
+    }
+    a.watchAll(config.data, write);
+    //@ts-ignore: invoke once
+    delete this.syncData;
+  },
 };
 /**属性数据 */
 type PropertyJson = {
-    value?: unknown;
-    expression?: string;
-    expressionEnabled?: boolean;
-    keys?: KeyframeData[];
-    ['@matchName']?: string;
-    [x: string]: unknown;
+  value?: unknown;
+  expression?: string;
+  expressionEnabled?: boolean;
+  keys?: KeyframeData[];
+  ['@matchName']?: string;
+  [x: string]: unknown;
 };
 /**关键帧数据 */
 class KeyframeData {
-    [key: string]: unknown;
-    constructor(property: Property) {
-        if (KeyframeData.isSpatial(property)) {
-            this.SpatialAutoBezier = false;
-            this.SpatialContinuous = false;
-            this.InSpatialTangent = [0, 0];
-            this.OutSpatialTangent = [0, 0];
-            this.Roving = false;
-        }
+  [key: string]: unknown;
+  constructor(property: Property) {
+    if (KeyframeData.isSpatial(property)) {
+      this.SpatialAutoBezier = false;
+      this.SpatialContinuous = false;
+      this.InSpatialTangent = [0, 0];
+      this.OutSpatialTangent = [0, 0];
+      this.Roving = false;
     }
-    /**判断属性值类型是否为空间值 */
-    static isSpatial(p: Property) {
-        return !!_.filter(
-            [PropertyValueType.TwoD_SPATIAL, PropertyValueType.ThreeD_SPATIAL],
-            (e): e is PropertyValueType => e === p.propertyValueType,
-        ).length;
-    }
-    /**入点插值类型 */
-    InInterpolationType = KeyframeInterpolationType.LINEAR;
-    OutInterpolationType = KeyframeInterpolationType.LINEAR;
-    /**入点缓动 */
-    InTemporalEase = [new KeyframeEase(0, 0.1)] as [
-        KeyframeEase,
-    ]; /* | [KeyframeEase, KeyframeEase] | [KeyframeEase, KeyframeEase, KeyframeEase] */
-    OutTemporalEase = [new KeyframeEase(0, 0.1)] as [
-        KeyframeEase,
-    ]; /* | [KeyframeEase, KeyframeEase] | [KeyframeEase, KeyframeEase, KeyframeEase] */
-    /**时间自动贝塞尔 */
-    TemporalAutoBezier = false;
-    /**时间连续性 */
-    TemporalContinuous = false;
-    Time = 0;
-    Value = null as unknown;
-    //以下为空间值特有属性
-    SpatialAutoBezier?: boolean;
-    SpatialContinuous?: boolean;
-    /**入点空间线性 */
-    InSpatialTangent?: [number, number] /* | [number, number, number] */;
-    OutSpatialTangent?: [number, number] /* | [number, number, number] */;
-    /**漂浮关键帧 */
-    Roving?: boolean;
+  }
+  /**判断属性值类型是否为空间值 */
+  static isSpatial(p: Property) {
+    return !!_.filter(
+      [PropertyValueType.TwoD_SPATIAL, PropertyValueType.ThreeD_SPATIAL],
+      (e): e is PropertyValueType => e === p.propertyValueType,
+    ).length;
+  }
+  /**入点插值类型 */
+  InInterpolationType = KeyframeInterpolationType.LINEAR;
+  OutInterpolationType = KeyframeInterpolationType.LINEAR;
+  /**入点缓动 */
+  InTemporalEase = [new KeyframeEase(0, 0.1)] as [
+    KeyframeEase,
+  ]; /* | [KeyframeEase, KeyframeEase] | [KeyframeEase, KeyframeEase, KeyframeEase] */
+  OutTemporalEase = [new KeyframeEase(0, 0.1)] as [
+    KeyframeEase,
+  ]; /* | [KeyframeEase, KeyframeEase] | [KeyframeEase, KeyframeEase, KeyframeEase] */
+  /**时间自动贝塞尔 */
+  TemporalAutoBezier = false;
+  /**时间连续性 */
+  TemporalContinuous = false;
+  Time = 0;
+  Value = null as unknown;
+  //以下为空间值特有属性
+  SpatialAutoBezier?: boolean;
+  SpatialContinuous?: boolean;
+  /**入点空间线性 */
+  InSpatialTangent?: [number, number] /* | [number, number, number] */;
+  OutSpatialTangent?: [number, number] /* | [number, number, number] */;
+  /**漂浮关键帧 */
+  Roving?: boolean;
 }
 const cvt = {
-    _any2obj: {
-        'object[]'(v: object[]) {
-            _.map(v, (e, i, arr) => {
-                cvt.set_property_data(i, arr[i], arr);
-            });
-            return v;
-        },
-        MarkerValue(v: MarkerValue) {
-            return v;
-        },
-        Shape(v: Shape) {
-            return v;
-        },
-        TextDocument(v: TextDocument) {
-            const obj: Partial<TextDocument> = {};
-            _.each(
-                (
-                    [
-                        'applyFill',
-                        'applyStroke',
-                        'fillColor',
-                        'font',
-                        'fontSize',
-                        'justification',
-                        'leading',
-                        'strokeColor',
-                        'strokeOverFill',
-                        'strokeWidth',
-                        'text',
-                        'tracking',
-                    ] as NonReadonlyKeys<TextDocument>[]
-                ).concat(v.boxText ? ['boxTextPos', 'boxTextSize'] : []),
-                (key) => {
-                    //@ts-ignore
-                    obj[key] = v[key];
-                },
-            );
-            return obj;
-        },
-        KeyframeEase(v: KeyframeEase) {
-            return v;
-        },
-        KeyframeData(v: KeyframeData) {
-            _.forOwn(v, (value, key, obj) => {
-                cvt.set_property_data(key, obj[key], obj);
-            });
-            return v;
-        },
+  _any2obj: {
+    'object[]'(v: object[]) {
+      _.map(v, (e, i, arr) => {
+        cvt.set_property_data(i, arr[i], arr);
+      });
+      return v;
     },
-    _obj2any: {
-        'object[]'(v: object[]): any[] {
-            return _.map(v, (e, i, arr) => cvt.get_property_data(i, arr));
-        },
-        MarkerValue(v: Partial<MarkerValue>) {
-            return new MarkerValue('');
-        },
-        Shape(v: Partial<Shape>) {
-            const obj = new Shape();
-            _.forOwn(v, (value, key: string) => {
-                //@ts-ignore
-                obj[key] = value;
-            });
-            return obj;
-        },
-        TextDocument(v: Partial<TextDocument>) {
-            return v;
-        },
-        KeyframeEase(v: Partial<KeyframeEase>) {
-            const { speed, influence } = v;
-            return new KeyframeEase(speed, influence < 0.1 ? 0.1 : influence); // 脚本设置 influence 范围 0.1 - 100
-        },
-        KeyframeData(v: Partial<KeyframeData>) {
-            const obj = {} as KeyframeData;
-            _.forOwn(v, (value, key) => {
-                obj[key] = cvt.get_property_data(key, v);
-            });
-            return obj;
-        },
+    MarkerValue(v: MarkerValue) {
+      return v;
     },
-    type(value: {}) {
-        const type = value.constructor.name;
-        switch (type) {
-            case 'MarkerValue':
-                return type;
-            case 'Shape':
-                return type;
-            case 'TextDocument':
-                return type;
-            case 'KeyframeEase':
-                return type;
-            case 'KeyframeData':
-                return type;
-        }
-        if (value instanceof Array) {
-            if (value.length === 0) {
-                return;
-            } else if (
-                _.filter(value, (e): e is object => typeof e === 'object')
-                    .length === value.length
-            ) {
-                return 'object[]';
-            }
-        }
+    Shape(v: Shape) {
+      return v;
     },
-    /**
-     * 自动识别 type, 并写入 data 对象
-     * @description 识别成功: 添加 type 属性, 转化 value
-     */
-    set_property_data(key: string | number, value: any, data: object) {
-        const type = cvt.type(value);
-        if (type) {
-            data[key] = cvt._any2obj[type](value);
-            data[key]['@type'] = type;
-        } else {
-            data[key] = value;
-        }
+    TextDocument(v: TextDocument) {
+      const obj: Partial<TextDocument> = {};
+      _.each(
+        (
+          [
+            'applyFill',
+            'applyStroke',
+            'fillColor',
+            'font',
+            'fontSize',
+            'justification',
+            'leading',
+            'strokeColor',
+            'strokeOverFill',
+            'strokeWidth',
+            'text',
+            'tracking',
+          ] satisfies NonReadonlyKeys<TextDocument>[]
+        ).concat(v.boxText ? ['boxTextPos', 'boxTextSize'] : []),
+        (key) => {
+          //@ts-ignore
+          obj[key] = v[key];
+        },
+      );
+      return obj;
     },
-    /**
-     * 获取 type 属性, 返回 value
-     * @description 获取成功: 删除 type 属性, 转化 value
-     * @description 如果 value 是 object[], 则遍历调用本方法
-     */
-    get_property_data<T extends object>(key: keyof T, data: T) {
-        const value = data[key];
-        const type: string | void = value['@type'];
-        if (type) {
-            delete value['@type'];
-            return cvt._obj2any[type](value);
-        } else if (cvt.type(value) === 'object[]') {
-            return cvt._obj2any['object[]'](value as object[]);
-        }
-        return value;
+    KeyframeEase(v: KeyframeEase) {
+      return v;
     },
+    KeyframeData(v: KeyframeData) {
+      _.forOwn(v, (value, key, obj) => {
+        cvt.set_property_data(key, obj[key], obj);
+      });
+      return v;
+    },
+  },
+  _obj2any: {
+    'object[]'(v: object[]): any[] {
+      return _.map(v, (e, i, arr) => cvt.get_property_data(i, arr));
+    },
+    MarkerValue(v: Partial<MarkerValue>) {
+      return new MarkerValue('');
+    },
+    Shape(v: Partial<Shape>) {
+      const obj = new Shape();
+      _.forOwn(v, (value, key: string) => {
+        //@ts-ignore
+        obj[key] = value;
+      });
+      return obj;
+    },
+    TextDocument(v: Partial<TextDocument>) {
+      return v;
+    },
+    KeyframeEase(v: Partial<KeyframeEase>) {
+      const { speed, influence } = v;
+      return new KeyframeEase(speed, influence < 0.1 ? 0.1 : influence); // 脚本设置 influence 范围 0.1 - 100
+    },
+    KeyframeData(v: Partial<KeyframeData>) {
+      const obj = {} as KeyframeData;
+      _.forOwn(v, (value, key) => {
+        obj[key] = cvt.get_property_data(key, v);
+      });
+      return obj;
+    },
+  },
+  type(value: {}) {
+    const type = value.constructor.name;
+    switch (type) {
+      case 'MarkerValue':
+        return type;
+      case 'Shape':
+        return type;
+      case 'TextDocument':
+        return type;
+      case 'KeyframeEase':
+        return type;
+      case 'KeyframeData':
+        return type;
+    }
+    if (value instanceof Array) {
+      if (value.length === 0) {
+        return;
+      } else if (
+        _.filter(value, (e): e is object => typeof e === 'object').length ===
+        value.length
+      ) {
+        return 'object[]';
+      }
+    }
+  },
+  /**
+   * 自动识别 type, 并写入 data 对象
+   * @description 识别成功: 添加 type 属性, 转化 value
+   */
+  set_property_data(key: string | number, value: any, data: object) {
+    const type = cvt.type(value);
+    if (type) {
+      data[key] = cvt._any2obj[type](value);
+      data[key]['@type'] = type;
+    } else {
+      data[key] = value;
+    }
+  },
+  /**
+   * 获取 type 属性, 返回 value
+   * @description 获取成功: 删除 type 属性, 转化 value
+   * @description 如果 value 是 object[], 则遍历调用本方法
+   */
+  get_property_data<T extends object>(key: keyof T, data: T) {
+    const value = data[key];
+    const type: string | void = value['@type'];
+    if (type) {
+      delete value['@type'];
+      return cvt._obj2any[type](value);
+    } else if (cvt.type(value) === 'object[]') {
+      return cvt._obj2any['object[]'](value as object[]);
+    }
+    return value;
+  },
 };
 const lyr = {
-    /**
-     * 返回不同模式的递归函数
-     */
-    recur_factory: function (
-        mode: 'get' | 'set',
-        {
-            GroupFn = (p: PropertyGroup | MaskPropertyGroup, d: {}) => true,
-            PropertyFn = (p: Property, d: {}) => true,
-        },
-    ) {
-        //@ts-ignore
-        const that = this;
-        const group_fn = mode + '_group',
-            property_fn = mode + '_property';
-        return function recur(p: _PropertyClasses, d: {}) {
-            if (p instanceof PropertyGroup || p instanceof MaskPropertyGroup) {
-                if (!GroupFn(p, d)) return;
-                return that[group_fn](p, d, recur);
-            } else if (p instanceof Property) {
-                if (!PropertyFn(p, d)) return;
-                switch (p.propertyValueType) {
-                    case PropertyValueType.NO_VALUE:
-                        return;
-                    // case PropertyValueType.CUSTOM_VALUE: return;
-                    default:
-                        return that[property_fn](p, d);
-                }
-            }
-        };
-    } as {
-        (
-            mode: 'get',
-            {
-                GroupFn,
-                PropertyFn,
-            }: {
-                GroupFn?: (
-                    p: PropertyGroup | MaskPropertyGroup,
-                    d: PropertyJson,
-                ) => boolean;
-                PropertyFn?: (p: Property, d: PropertyJson) => boolean;
-            },
-        ): (p: _PropertyClasses, d: PropertyJson) => void | {};
-        (
-            mode: 'set',
-            {
-                GroupFn,
-                PropertyFn,
-            }: {
-                GroupFn?: (
-                    p: PropertyGroup | MaskPropertyGroup,
-                    d: PropertyJson,
-                ) => boolean;
-                PropertyFn?: (p: Property, d: PropertyJson) => boolean;
-            },
-        ): (p: _PropertyClasses, d: PropertyJson) => _PropertyClasses;
+  /**
+   * 返回不同模式的递归函数
+   */
+  recur_factory: function (
+    mode: 'get' | 'set',
+    {
+      GroupFn = (p: PropertyGroup | MaskPropertyGroup, d: {}) => true,
+      PropertyFn = (p: Property, d: {}) => true,
     },
-    /**
-     * 递归获取 PropertyGroup 下的所有 _PropertyClasses
-     * 并对不同的 _PropertyClasses 执行不同函数
-     */
-    get_group(
-        group: PropertyGroup | MaskPropertyGroup,
-        data: PropertyJson,
-        recur: (p: _PropertyClasses, d: {}) => void | {},
-    ) {
-        data['@matchName'] = group.matchName;
-        _.eachProperties(group, (property: _PropertyClasses) => {
-            const value = recur(property, {});
-            if (value != null) {
-                data[property.name] = value;
-            }
-        });
-        return data;
-    },
-    set_group(
-        group: PropertyGroup | MaskPropertyGroup,
-        data: {},
-        recur: (p: _PropertyClasses, d: {}) => _PropertyClasses,
-    ) {
-        _.forOwn(data, (sub_data, key) => {
-            if (key[0] === '@') {
-                return;
-            }
-            if (typeof sub_data !== 'object') {
-                group[key] = sub_data;
-                return;
-            }
-            let property: _PropertyClasses;
-            const matchName = sub_data['@matchName'],
-                name = key;
-            if (matchName) {
-                if (group.canAddProperty(matchName)) {
-                    // group
-                    property = group.addProperty(matchName);
-                    if (group.propertyType === PropertyType.INDEXED_GROUP) {
-                        property.name = name;
-                    }
-                } else {
-                    // property
-                    property = group.property(matchName);
-                }
-            } else if (name) {
-                // property
-                property = group.property(name);
-            } else {
-                return a.abort('属性创建/获取失败:' + name);
-            }
-            recur(property, sub_data);
-        });
-        return group;
-    },
-    /**
-     * 获取 Property 的属性，并写入 data
-     */
-    get_property(property: Property, data: object = {}) {
-        function get(
-            key: keyof PropertyJson,
-            defalutValue?: PropertyJson[keyof PropertyJson],
-        ) {
-            cvt.set_property_data(key, property[key] ?? defalutValue, data);
+  ) {
+    //@ts-ignore
+    const that = this;
+    const group_fn = mode + '_group',
+      property_fn = mode + '_property';
+    return function recur(p: _PropertyClasses, d: {}) {
+      if (p instanceof PropertyGroup || p instanceof MaskPropertyGroup) {
+        if (!GroupFn(p, d)) return;
+        return that[group_fn](p, d, recur);
+      } else if (p instanceof Property) {
+        if (!PropertyFn(p, d)) return;
+        switch (p.propertyValueType) {
+          case PropertyValueType.NO_VALUE:
+            return;
+          // case PropertyValueType.CUSTOM_VALUE: return;
+          default:
+            return that[property_fn](p, d);
         }
-        if (!property.canVaryOverTime) {
-            // 不能设置 关键帧或表达式
-            get('value');
-            return data;
-        }
-        if (property.canSetExpression && property.expression) {
-            // 有表达式
-            get('expression');
-            get('expressionEnabled');
-        }
-        if (property.numKeys) {
-            // 有关键帧
-            const keys: KeyframeData[] = Array(property.numKeys);
-            _.map(keys, (e, i, arr) => {
-                const obj = (arr[i] = new KeyframeData(property));
-                _.forOwn(obj, (value, key, obj) => {
-                    obj[key] = property['key' + key](i + 1);
-                });
-            });
-            get('keys', keys);
+      }
+    };
+  } as {
+    (
+      mode: 'get',
+      {
+        GroupFn,
+        PropertyFn,
+      }: {
+        GroupFn?: (
+          p: PropertyGroup | MaskPropertyGroup,
+          d: PropertyJson,
+        ) => boolean;
+        PropertyFn?: (p: Property, d: PropertyJson) => boolean;
+      },
+    ): (p: _PropertyClasses, d: PropertyJson) => void | {};
+    (
+      mode: 'set',
+      {
+        GroupFn,
+        PropertyFn,
+      }: {
+        GroupFn?: (
+          p: PropertyGroup | MaskPropertyGroup,
+          d: PropertyJson,
+        ) => boolean;
+        PropertyFn?: (p: Property, d: PropertyJson) => boolean;
+      },
+    ): (p: _PropertyClasses, d: PropertyJson) => _PropertyClasses;
+  },
+  /**
+   * 递归获取 PropertyGroup 下的所有 _PropertyClasses
+   * 并对不同的 _PropertyClasses 执行不同函数
+   */
+  get_group(
+    group: PropertyGroup | MaskPropertyGroup,
+    data: PropertyJson,
+    recur: (p: _PropertyClasses, d: {}) => void | {},
+  ) {
+    data['@matchName'] = group.matchName;
+    _.eachProperties(group, (property: _PropertyClasses) => {
+      const value = recur(property, {});
+      if (value != null) {
+        data[property.name] = value;
+      }
+    });
+    return data;
+  },
+  set_group(
+    group: PropertyGroup | MaskPropertyGroup,
+    data: {},
+    recur: (p: _PropertyClasses, d: {}) => _PropertyClasses,
+  ) {
+    _.forOwn(data, (sub_data, key) => {
+      if (key[0] === '@') {
+        return;
+      }
+      if (typeof sub_data !== 'object') {
+        group[key] = sub_data;
+        return;
+      }
+      let property: _PropertyClasses;
+      const matchName = sub_data['@matchName'],
+        name = key;
+      if (matchName) {
+        if (group.canAddProperty(matchName)) {
+          // group
+          property = group.addProperty(matchName);
+          if (group.propertyType === PropertyType.INDEXED_GROUP) {
+            property.name = name;
+          }
         } else {
-            get('value');
+          // property
+          property = group.property(matchName);
         }
-        return data;
-    },
-    set_property(property: Property, data: PropertyJson) {
-        const obj: PropertyJson = {};
-        _.forOwn(data, (value, key) => {
-            obj[key] = cvt.get_property_data(key, data);
+      } else if (name) {
+        // property
+        property = group.property(name);
+      } else {
+        return a.abort('属性创建/获取失败:' + name);
+      }
+      recur(property, sub_data);
+    });
+    return group;
+  },
+  /**
+   * 获取 Property 的属性，并写入 data
+   */
+  get_property(property: Property, data: object = {}) {
+    function get(
+      key: keyof PropertyJson,
+      defalutValue?: PropertyJson[keyof PropertyJson],
+    ) {
+      cvt.set_property_data(key, property[key] ?? defalutValue, data);
+    }
+    if (!property.canVaryOverTime) {
+      // 不能设置 关键帧或表达式
+      get('value');
+      return data;
+    }
+    if (property.canSetExpression && property.expression) {
+      // 有表达式
+      get('expression');
+      get('expressionEnabled');
+    }
+    if (property.numKeys) {
+      // 有关键帧
+      const keys: KeyframeData[] = Array(property.numKeys);
+      _.map(keys, (e, i, arr) => {
+        const obj = (arr[i] = new KeyframeData(property));
+        _.forOwn(obj, (value, key, obj) => {
+          obj[key] = property['key' + key](i + 1);
         });
-        const { value, expression, expressionEnabled, keys } = obj;
-        if (value != null) {
-            if (property.name === 'Source Text') {
-                const val = value as Partial<TextDocument>;
-                property.setValue(new TextDocument(val.text ?? ''));
-                _.forOwn(val, (v, k) => {
-                    property.value[k] = v;
-                });
-            } else {
-                property.setValue(value);
-            }
-            // if (property.parentProperty.elided) {
-            //     $.writeln(['属性父级隐藏', property.name, property.parentProperty.name].join('\t'));
-            // } else if (property.elided) {
-            //     $.writeln(['属性隐藏', property.name].join('\t'));
-            // }
-        }
-        if (expression) {
-            property.expression = expression;
-            property.expressionEnabled = !!expressionEnabled;
-        }
-        if (keys) {
-            // 设置关键帧
-            if (keys.length === 0) alert('关键帧获取失败', '脚本警告');
-            _.map(keys, ({ Time, Value }) => {
-                property.setValueAtTime(Time, Value);
-            });
-            // 设置关键帧属性
-            const isSpatial = KeyframeData.isSpatial(property);
-            _.map(
-                keys,
-                (
-                    {
-                        InInterpolationType, // 入点插值
-                        OutInterpolationType,
-                        InTemporalEase, // 入点缓动
-                        OutTemporalEase,
-                        TemporalAutoBezier, // 时间自动贝塞尔
-                        TemporalContinuous,
-                        // 以下为空间值特有属性
-                        SpatialAutoBezier,
-                        SpatialContinuous, // 空间连续性
-                        InSpatialTangent, // 入点空间线性
-                        OutSpatialTangent,
-                        Roving, // 漂浮关键帧
-                    },
-                    i,
-                ) => {
-                    property.setInterpolationTypeAtKey(
-                        i + 1,
-                        InInterpolationType,
-                        OutInterpolationType,
-                    );
-                    property.setTemporalEaseAtKey(
-                        i + 1,
-                        InTemporalEase,
-                        OutTemporalEase,
-                    );
-                    property.setTemporalAutoBezierAtKey(
-                        i + 1,
-                        TemporalAutoBezier,
-                    );
-                    property.setTemporalContinuousAtKey(
-                        i + 1,
-                        TemporalContinuous,
-                    );
-                    if (isSpatial) {
-                        property.setSpatialTangentsAtKey(
-                            i + 1,
-                            InSpatialTangent,
-                            OutSpatialTangent,
-                        );
-                        property.setSpatialAutoBezierAtKey(
-                            i + 1,
-                            SpatialAutoBezier,
-                        );
-                        property.setSpatialContinuousAtKey(
-                            i + 1,
-                            SpatialContinuous,
-                        );
-                        property.setRovingAtKey(i + 1, Roving);
-                    }
-                },
+      });
+      get('keys', keys);
+    } else {
+      get('value');
+    }
+    return data;
+  },
+  set_property(property: Property, data: PropertyJson) {
+    const obj: PropertyJson = {};
+    _.forOwn(data, (value, key) => {
+      obj[key] = cvt.get_property_data(key, data);
+    });
+    const { value, expression, expressionEnabled, keys } = obj;
+    if (value != null) {
+      if (property.name === 'Source Text') {
+        const val: Partial<TextDocument> = value;
+        property.setValue(new TextDocument(val.text ?? ''));
+        _.forOwn(val, (v, k) => {
+          property.value[k] = v;
+        });
+      } else {
+        property.setValue(value);
+      }
+      // if (property.parentProperty.elided) {
+      //     $.writeln(['属性父级隐藏', property.name, property.parentProperty.name].join('\t'));
+      // } else if (property.elided) {
+      //     $.writeln(['属性隐藏', property.name].join('\t'));
+      // }
+    }
+    if (expression) {
+      property.expression = expression;
+      property.expressionEnabled = !!expressionEnabled;
+    }
+    if (keys) {
+      // 设置关键帧
+      if (keys.length === 0) alert('关键帧获取失败', '脚本警告');
+      _.map(keys, ({ Time, Value }) => {
+        property.setValueAtTime(Time, Value);
+      });
+      // 设置关键帧属性
+      const isSpatial = KeyframeData.isSpatial(property);
+      _.map(
+        keys,
+        (
+          {
+            InInterpolationType, // 入点插值
+            OutInterpolationType,
+            InTemporalEase, // 入点缓动
+            OutTemporalEase,
+            TemporalAutoBezier, // 时间自动贝塞尔
+            TemporalContinuous,
+            // 以下为空间值特有属性
+            SpatialAutoBezier,
+            SpatialContinuous, // 空间连续性
+            InSpatialTangent, // 入点空间线性
+            OutSpatialTangent,
+            Roving, // 漂浮关键帧
+          },
+          i,
+        ) => {
+          property.setInterpolationTypeAtKey(
+            i + 1,
+            InInterpolationType,
+            OutInterpolationType,
+          );
+          property.setTemporalEaseAtKey(i + 1, InTemporalEase, OutTemporalEase);
+          property.setTemporalAutoBezierAtKey(i + 1, TemporalAutoBezier);
+          property.setTemporalContinuousAtKey(i + 1, TemporalContinuous);
+          if (isSpatial) {
+            property.setSpatialTangentsAtKey(
+              i + 1,
+              InSpatialTangent,
+              OutSpatialTangent,
             );
+            property.setSpatialAutoBezierAtKey(i + 1, SpatialAutoBezier);
+            property.setSpatialContinuousAtKey(i + 1, SpatialContinuous);
+            property.setRovingAtKey(i + 1, Roving);
+          }
+        },
+      );
+    }
+    return property;
+  },
+  get_layer(layer: Layer, propertyNames: (keyof Layer)[] = []) {
+    const data: PropertyJson = {};
+    _.map(
+      (
+        [
+          'name',
+          'comment',
+          'startTime', //先设置开始时间, 再设置出入点
+          'inPoint',
+          'outPoint',
+          'label',
+          'locked',
+          'shy',
+          'solo',
+          'stretch',
+          'outPoint',
+        ] as (keyof Layer)[]
+      ).concat(propertyNames),
+      (key) => {
+        data[key] = layer[key];
+      },
+    );
+    function defaultFn(p: _PropertyClasses, d: PropertyJson) {
+      if (p.isModified) {
+        if (p.canSetEnabled && !p.enabled) {
+          d['enabled'] = false;
         }
-        return property;
-    },
-    get_layer(layer: Layer, propertyNames: (keyof Layer)[] = []) {
-        const data: PropertyJson = {};
-        _.map(
-            (
+        return true;
+      }
+    }
+    lyr.get_group(
+      layer,
+      data,
+      lyr.recur_factory('get', {
+        GroupFn(p, d) {
+          switch (p.parentProperty.matchName) {
+            case 'ADBE Root Vectors Group':
+              return defaultFn(p, d);
+            case 'ADBE Mask Parade': {
+              _.map(
                 [
-                    'name',
-                    'comment',
-                    'startTime', //先设置开始时间, 再设置出入点
-                    'inPoint',
-                    'outPoint',
-                    'label',
-                    'locked',
-                    'shy',
-                    'solo',
-                    'stretch',
-                    'outPoint',
-                ] as (keyof Layer)[]
-            ).concat(propertyNames),
-            (key) => {
-                data[key] = layer[key];
-            },
-        );
-        function defaultFn(p: _PropertyClasses, d: PropertyJson) {
-            if (p.isModified) {
-                if (p.canSetEnabled && !p.enabled) {
-                    d['enabled'] = false;
-                }
-                return true;
+                  'color',
+                  'inverted',
+                  'locked',
+                  'maskFeatherFalloff',
+                  'maskMode',
+                  'maskMotionBlur',
+                  'rotoBezier',
+                ],
+                (key) => {
+                  d[key] = p[key];
+                },
+              );
+              return true;
             }
-        }
-        lyr.get_group(
-            layer,
-            data,
-            lyr.recur_factory('get', {
-                GroupFn(p, d) {
-                    switch (p.parentProperty.matchName) {
-                        case 'ADBE Root Vectors Group':
-                            return defaultFn(p, d);
-                        case 'ADBE Mask Parade': {
-                            _.map(
-                                [
-                                    'color',
-                                    'inverted',
-                                    'locked',
-                                    'maskFeatherFalloff',
-                                    'maskMode',
-                                    'maskMotionBlur',
-                                    'rotoBezier',
-                                ],
-                                (key) => {
-                                    d[key] = p[key];
-                                },
-                            );
-                            return true;
-                        }
-                        case 'ADBE Effect Parade':
-                            return true; // 所有效果都要导出
-                        case 'ADBE Transform Group':
-                            return defaultFn(p, d);
-                        default:
-                            return defaultFn(p, d);
-                    }
-                },
-                PropertyFn(p, d) {
-                    switch (p.parentProperty.matchName) {
-                        case 'ADBE Text Animator Properties': {
-                            //文本动画设计器属性
-                            d['@matchName'] = p.matchName;
-                            return defaultFn(p, d);
-                        }
-                        case 'ADBE Transform Group': {
-                            return (
-                                defaultFn(p, d) &&
-                                _.filter(
-                                    ['X Position', 'Y Position'],
-                                    (e): e is string => e === p.name,
-                                ).length === 0
-                            );
-                        }
-                        default:
-                            return defaultFn(p, d);
-                    }
-                },
-            }),
-        );
-        return data;
-    },
-    set_layer(layer: Layer, data: {}) {
-        return lyr.set_group(layer, data, lyr.recur_factory('set', {}));
-    },
+            case 'ADBE Effect Parade':
+              return true; // 所有效果都要导出
+            case 'ADBE Transform Group':
+              return defaultFn(p, d);
+            default:
+              return defaultFn(p, d);
+          }
+        },
+        PropertyFn(p, d) {
+          switch (p.parentProperty.matchName) {
+            case 'ADBE Text Animator Properties': {
+              //文本动画设计器属性
+              d['@matchName'] = p.matchName;
+              return defaultFn(p, d);
+            }
+            case 'ADBE Transform Group': {
+              return (
+                defaultFn(p, d) &&
+                _.filter(
+                  ['X Position', 'Y Position'],
+                  (e): e is string => e === p.name,
+                ).length === 0
+              );
+            }
+            default:
+              return defaultFn(p, d);
+          }
+        },
+      }),
+    );
+    return data;
+  },
+  set_layer(layer: Layer, data: {}) {
+    return lyr.set_group(layer, data, lyr.recur_factory('set', {}));
+  },
 };
 const matchTypes = {
-    'ADBE Vector Layer': 'Shape',
-    'ADBE Text Layer': 'Text',
-    'ADBE Camera Layer': 'Camera',
-    'ADBE Light Layer': 'Light',
-};
+  'ADBE Vector Layer': 'Shape',
+  'ADBE Text Layer': 'Text',
+  'ADBE Camera Layer': 'Camera',
+  'ADBE Light Layer': 'Light',
+} as const;
 const hlp = {
-    import_layer(data: PropertyJson) {
-        const layer = t.add_layer(matchTypes[data['@matchName']]);
-        lyr.set_layer(layer, data);
-        return layer;
-    },
-    export_layer(layer: Layer) {
-        if (layer.parent) {
-            a.abort('抱歉，暂不支持导出有父级图层的图层');
-        }
-        const propertyNames: (keyof AVLayer)[] = [
-            'adjustmentLayer',
-            'autoOrient',
-            // 'audioEnabled', // 音视频层
-            'blendingMode',
-            'effectsActive',
-            // 'environmentLayer', // 光线追踪的合成层 音视频层
-            'frameBlendingType',
-            'guideLayer',
-            'motionBlur',
-            'preserveTransparency',
-            'quality',
-            'samplingQuality',
-            'threeDLayer',
-            // 'threeDPerChar', // TextLayer
-            'trackMatteType',
-        ];
-        // 判断图层类型
-        const type = matchTypes[layer.matchName];
-        switch (type) {
-            case 'Text': {
-                propertyNames.push('threeDPerChar');
-            }
-            case 'Shape': {
-                (layer as TextLayer | ShapeLayer)
-                    .canSetCollapseTransformation &&
-                    propertyNames.push('collapseTransformation');
-                (layer as TextLayer | ShapeLayer).canSetTimeRemapEnabled &&
-                    propertyNames.push('timeRemapEnabled');
-                break;
-            }
-            case 'Camera':
-            case 'Light':
-            default:
-                a.abort('图层类型错误: ' + layer.matchName);
-        }
-        return lyr.get_layer(layer, propertyNames);
-    },
-    config_read() {
-        config.user = JSON.parse(f.read(pth.user_config()));
-    },
-    config_write() {
-        f.write(pth.user_config(), JSON.stringify(config.user));
-    },
-};
-const pth = {
-    layers: () => [config.root_path, config.name, 'layers'].join('\\'),
-    download: () =>
-        [config.root_path, config.name, config.name + '.jsx'].join('\\'),
-    local: () =>
-        [
-            Folder.appPackage.fsName,
-            'Scripts',
-            'ScriptUI Panels',
-            config.name + '.jsx',
-        ].join('\\'),
-    user_config: () => [config.root_path, config.name, 'user.cfg'].join('\\'),
+  import_layer(data: PropertyJson) {
+    const layer = t.add_layer(matchTypes[data['@matchName']]);
+    lyr.set_layer(layer, data);
+    return layer;
+  },
+  export_layer(layer: Layer) {
+    if (layer.parent) {
+      a.abort('抱歉，暂不支持导出有父级图层的图层');
+    }
+    const propertyNames: (keyof AVLayer)[] = [
+      'adjustmentLayer',
+      'autoOrient',
+      // 'audioEnabled', // 音视频层
+      'blendingMode',
+      'effectsActive',
+      // 'environmentLayer', // 光线追踪的合成层 音视频层
+      'frameBlendingType',
+      'guideLayer',
+      'motionBlur',
+      'preserveTransparency',
+      'quality',
+      'samplingQuality',
+      'threeDLayer',
+      // 'threeDPerChar', // TextLayer
+      'trackMatteType',
+    ];
+    // 判断图层类型
+    const type = matchTypes[layer.matchName];
+    switch (type) {
+      case 'Text': {
+        propertyNames.push('threeDPerChar');
+      }
+      case 'Shape': {
+        (layer as TextLayer | ShapeLayer).canSetCollapseTransformation &&
+          propertyNames.push('collapseTransformation');
+        (layer as TextLayer | ShapeLayer).canSetTimeRemapEnabled &&
+          propertyNames.push('timeRemapEnabled');
+        break;
+      }
+      case 'Camera':
+      case 'Light':
+      default:
+        a.abort('图层类型错误: ' + layer.matchName);
+    }
+    return lyr.get_layer(layer, propertyNames);
+  },
 };
 const app = {
-    init() {
-        const file = f.repair_path(pth.user_config());
-        file.exists ? hlp.config_read() : hlp.config_write();
-        config.user.auto_updata && app.update();
-    },
-    import() {
-        const datas = f.open({
-            path: pth.layers(),
-            filter: '*.json',
-            multi: true,
-        });
-        if (!datas) return;
-        _.forOwn(datas, (value) => {
-            hlp.import_layer(JSON.parse(value));
-        });
-    },
-    export() {
-        const layers = t.get_selected_layers();
-        const datas: Record<string, string> = {};
-        _.map(layers, (layer) => {
-            const data = hlp.export_layer(layer);
-            datas[layer.name + '.json'] = JSON.stringify(data)
-                .replace(/\[\s+\]/g, '[]')
-                .replace(/\{\s+\}/g, '{}');
-        });
-        f.save(datas, { path: pth.layers() });
-    },
-    UI: () => {
-        const _this = this;
-        function setting() {
-            hlp.config_read();
-            const { user, name, version } = config;
-            _.tree.parse({
-                style: {
-                    text: `${name} ${version}`,
-                    margins: 10,
-                },
-                panel: {
-                    style: { text: '更新' },
-                    button: {
-                        style: {
-                            text: '检查更新',
-                            alignment: 'fill',
-                            onClick: app.update,
-                        },
-                    },
-                    checkbox: {
-                        style: {
-                            text: '每次启动时检查更新',
-                            value: user.auto_updata,
-                            onClick(this: Checkbox) {
-                                user.auto_updata = this.value;
-                            },
-                        },
-                    },
-                },
-                button: {
-                    style: {
-                        text: 'OK',
-                        alignment: 'fill',
-                        onClick() {
-                            hlp.config_write();
-                            //@ts-ignore
-                            _this.close();
-                        },
-                    },
-                },
-            });
-        }
-        const ui = _.reduce(
-            [
-                [File.decode(config.icons.import), app.import],
-                [File.decode(config.icons.export), app.export],
-                [File.decode(config.icons.setting), setting],
-            ] as const,
-            (acc, [icon, fn], i) =>
-                _.assign(acc, {
-                    ['iconbutton' + i]: {
-                        param: [, , icon, { style: 'toolbutton' }],
-                        style: {
-                            preferredSize: [30, 30],
-                            onClick: fn && (() => _.setUndoGroup('', fn)),
-                        },
-                    },
-                }),
-            {
-                style: {
-                    orientation: 'column',
-                    alignChildren: 'center',
-                    margins: 0,
-                    spacing: 0,
-                },
-            } as Data,
-        );
-        _.tree.context = this;
-        _.tree.parse(ui);
-    },
-    update() {
-        if ($.os.indexOf('Windows') === -1) {
-            return alert('更新失败: 只支持Windows系统');
-        }
-        const filePath = pth.download();
-        system.callSystem(
-            'cmd /c powershell -Command "echo ' +
-                config.name +
-                '检查更新; iwr -Uri ' +
-                config.updata_url +
-                ' -OutFile ' +
-                filePath +
-                '"',
-        );
-        const file = new File(filePath);
-        if (!file.exists) {
-            return alert('更新失败: 无法下载新脚本');
-        }
-        const version = f.read(file).match(/version: \'([\s\S]+?)\'/)?.[1];
-        if (typeof version !== 'string') {
-            return alert('更新失败: 无法获取版本号');
-        }
-        if (version === config.version) {
-            file.remove();
-            alert('已是最新版', version);
-        } else if (file.copy(pth.local())) {
-            file.remove();
-            alert('更新完成: 请重启程序', version);
-        } else {
-            alert('已下载最新脚本, 请手动覆盖旧脚本\n' + file.fsName, version);
-        }
-    },
+  import() {
+    const datas = f.open({
+      path: config.pth.layers,
+      filter: '*.json',
+      multi: true,
+    });
+    if (!datas) return;
+    _.forOwn(datas, (value) => {
+      hlp.import_layer(JSON.parse(value));
+    });
+  },
+  export() {
+    const layers = t.get_selected_layers();
+    const datas: Record<string, string> = {};
+    _.map(layers, (layer) => {
+      const data = hlp.export_layer(layer);
+      datas[layer.name + '.json'] = JSON.stringify(data)
+        .replace(/\[\s+\]/g, '[]')
+        .replace(/\{\s+\}/g, '{}');
+    });
+    f.save(datas, { path: config.pth.layers });
+  },
+  UI: () => {
+    function setting() {
+      const { data, version } = config;
+      _.tree.parse({
+        style: {
+          text: `${$.fileName} ${version}`,
+          margins: 10,
+        },
+        panel: {
+          style: { text: 'Update' },
+          button: {
+            style: {
+              text: 'Check Update',
+              alignment: 'fill',
+              onClick: app.update,
+            },
+          },
+          checkbox: {
+            style: {
+              text: 'Check Update on Startup',
+              value: data.auto_updata,
+              onClick(this: Checkbox) {
+                data.auto_updata = this.value;
+              },
+            },
+          },
+        },
+      });
+    }
+    const ui = _.reduce(
+      [
+        [config.icons.import, app.import],
+        [config.icons.export, app.export],
+        [config.icons.setting, setting],
+      ] as const,
+      (acc, [icon, fn], i) =>
+        _.assign(acc, {
+          ['iconbutton' + i]: {
+            param: [, , icon, { style: 'toolbutton' }],
+            style: {
+              preferredSize: [30, 30],
+              onClick: fn && (() => _.setUndoGroup('', fn)),
+            },
+          },
+        }),
+      {
+        style: {
+          orientation: 'column',
+          alignChildren: 'center',
+          margins: 0,
+          spacing: 0,
+        },
+      } as LooseObj,
+    );
+    _.tree.context = this;
+    _.tree.parse(ui);
+  },
+  update() {
+    a.update({
+      current_version: config.version,
+      latest_version: (text) => text.match(/version: \'([\s\S]+?)\'/)?.[1],
+      ...config.pth.update,
+    });
+  },
 };
-app.init();
+config.syncData();
+config.data.auto_updata && app.update();
 app.UI();

@@ -7,8 +7,8 @@ const { AE_PATH, TEST_FILE } = process.env;
 const appPath = path.join(AE_PATH, 'AfterFX.exe');
 const projPath = path.join(process.cwd(), TEST_FILE);
 exec(`"${appPath}" ${projPath}`, (err, stdout, stderr) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
+  if (err) {
+    console.error(err);
+    return;
+  }
 });

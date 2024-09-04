@@ -1,16 +1,16 @@
 {
-    "compilerOptions": {
-        "target": "ES3",
-        "ignoreDeprecations": "5.0",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        // type
-        "noLib": true,
-        "types": ["types-for-adobe/AfterEffects/23.0"],
-        "strict": true,
-        // file
-        "jsx": "preserve"
-        // "removeComments": true,
-        // "sourceMap": true,
-    }
+  "compilerOptions": {
+    "target": "ES3",
+    "ignoreDeprecations": "5.0",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    // type
+    "noLib": true,
+    "types": ["types-for-adobe/AfterEffects/23.0"],
+    "strict": true,
+    // file
+    "jsx": "preserve"
+    // "removeComments": true,
+    // "sourceMap": true,
+  }
 }

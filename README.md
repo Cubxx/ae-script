@@ -10,8 +10,8 @@
 
 这是一个辅助安装的 PowerShell 脚本，它用于将本仓库脚本下载至对应本地路径。
 
--   网络安装（只需联网）
--   本地安装（需要下载整个仓库）
+- 网络安装（只需联网）
+- 本地安装（需要下载整个仓库）
 
 ### 直接下载
 
@@ -19,8 +19,8 @@
 
 参考：
 
--   https://helpx.adobe.com/cn/after-effects/using/scripts.html
--   https://www.baidu.com/s?wd=如何安装ae脚本
+- https://helpx.adobe.com/cn/after-effects/using/scripts.html
+- https://www.baidu.com/s?wd=如何安装ae脚本
 
 ## 脚本类型
 
@@ -35,11 +35,11 @@
 
 ## 脚本列表
 
-| 原版 | 压缩版 | 描述 |
-| --- | --- | --- |
+| 原版                                    | 压缩版                                          | 描述         |
+| --------------------------------------- | ----------------------------------------------- | ------------ |
 | _[toolbox.ui.jsx](dist/toolbox.ui.jsx)_ | _[toolbox.ui.min.jsx](dist/toolbox.ui.min.jsx)_ | 自制工具面板 |
 
 ## 最佳实践
 
--   [文档](https://docs.yuelili.com/#/post/Ae/scripting/zh/General/Application.md)
--   [工具库](https://raymondclr.github.io/Soil/modules/soil.html)
+- [文档](https://docs.yuelili.com/#/post/Ae/scripting/zh/General/Application.md)
+- [工具库](https://raymondclr.github.io/Soil/modules/soil.html)
